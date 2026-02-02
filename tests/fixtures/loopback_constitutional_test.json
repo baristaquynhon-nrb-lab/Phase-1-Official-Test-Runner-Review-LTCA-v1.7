@@ -1,0 +1,387 @@
+{
+  "schema_id": "LTCA_FIXTURE_SCHEMA_v1.0",
+  "doc_type": "fixture",
+  "runner": {
+    "runner_id": "LTCA_OFFICIAL_TEST_RUNNER_FULL_SCENARIO_v1_0",
+    "runner_version": "1.0",
+    "ltca_version": "1.7"
+  },
+  "case": {
+    "scenario_id": "LOOPBACK_CONSTITUTIONAL_TEST_001",
+    "phase": 2,
+    "description": "Dedicated test for Loopback as Constrained Hypothesis Revision under Constitutional Law Set Control"
+  },
+  "determinism": {
+    "canonical_json": "RFC8785_subset",
+    "fp_mode": "IEEE754",
+    "numeric_profile": "LTCA_NUMERIC_PROFILE_v1"
+  },
+  "payload": {
+    "spec_ref": "LOOPBACK_FORMAL_SPEC_v1.0",
+
+    "active_law_set": {
+      "law_set_id": "L_ACTIVE_EG_007",
+      "laws": [
+        {
+          "law_id": "L_g_active",
+          "expression": "F_g = G * (m1*m2) / r^2",
+          "ast": {
+            "op": "OP_EQ",
+            "args": [
+              { "sym": "F_g" },
+              {
+                "op": "OP_MUL",
+                "args": [
+                  { "sym": "G" },
+                  {
+                    "op": "OP_DIV",
+                    "args": [
+                      { "op": "OP_MUL", "args": [{ "sym": "m1" }, { "sym": "m2" }], "meta": { "dim": [2, 0, 0, 0, 0, 0, 0], "symmetry": "Scalar" } },
+                      { "op": "OP_POW", "args": [{ "sym": "r" }, { "lit": "2" }], "meta": { "dim": [0, 2, 0, 0, 0, 0, 0], "symmetry": "Scalar" } }
+                    ],
+                    "meta": { "dim": [2, -2, 0, 0, 0, 0, 0], "symmetry": "Scalar" }
+                  }
+                ],
+                "meta": { "dim": [1, 1, -2, 0, 0, 0, 0], "symmetry": "Scalar" }
+              }
+            ],
+            "meta": { "dim": [1, 1, -2, 0, 0, 0, 0], "symmetry": "Scalar" }
+          },
+          "status": "ACTIVE_LAW"
+        },
+        {
+          "law_id": "L_e_active",
+          "expression": "F_e = (1 / (4*pi*epsilon0)) * (q1*q2) / r^2",
+          "ast": {
+            "op": "OP_EQ",
+            "args": [
+              { "sym": "F_e" },
+              {
+                "op": "OP_MUL",
+                "args": [
+                  {
+                    "op": "OP_DIV",
+                    "args": [
+                      { "lit": "1" },
+                      { "op": "OP_MUL", "args": [{ "lit": "4" }, { "sym": "pi" }, { "sym": "epsilon0" }], "meta": { "dim": [-1, -3, 4, 2, 0, 0, 0], "symmetry": "Scalar" } }
+                    ],
+                    "meta": { "dim": [1, 3, -4, -2, 0, 0, 0], "symmetry": "Scalar" }
+                  },
+                  {
+                    "op": "OP_DIV",
+                    "args": [
+                      { "op": "OP_MUL", "args": [{ "sym": "q1" }, { "sym": "q2" }], "meta": { "dim": [0, 0, 2, 2, 0, 0, 0], "symmetry": "Scalar" } },
+                      { "op": "OP_POW", "args": [{ "sym": "r" }, { "lit": "2" }], "meta": { "dim": [0, 2, 0, 0, 0, 0, 0], "symmetry": "Scalar" } }
+                    ],
+                    "meta": { "dim": [0, -2, 2, 2, 0, 0, 0], "symmetry": "Scalar" }
+                  }
+                ],
+                "meta": { "dim": [1, 1, -2, 0, 0, 0, 0], "symmetry": "Scalar" }
+              }
+            ],
+            "meta": { "dim": [1, 1, -2, 0, 0, 0, 0], "symmetry": "Scalar" }
+          },
+          "status": "ACTIVE_LAW"
+        }
+      ]
+    },
+
+    "trigger": {
+      "description": "Section 3: Loopback Trigger Condition",
+      "trigger_predicate": {
+        "mlr_verdict": "REJECT",
+        "lssm_range": {
+          "lower_bound": { "lit": "0.40" },
+          "upper_bound": { "lit": "0.80" },
+          "lower_bound_semantic": "tau_halt",
+          "upper_bound_semantic": "tau_mode2"
+        }
+      },
+      "mlr_rejection": {
+        "event": "MLR_RESOLVE",
+        "case_id": "MLR_EG_001",
+        "zone": "Z_007",
+        "strategy": "P1_CONSERVATION_FIRST",
+        "law_set_proposals": ["G_CAND_3", "E_CAND_4"],
+        "conflicts": [
+          {
+            "class": "C3_CONSERVATION_BREACH",
+            "law": "E_CAND_4",
+            "detail": "Proposed epsilon0 rescaling violates local energy conservation at Z_007 boundary",
+            "witness": {
+              "type": "CLOSED_LOOP_WORK_NONZERO",
+              "quantity": "W_loop",
+              "sign": "!=0",
+              "boundary": "Z_007",
+              "evidence_ref": "W_MLR_CONSERVATION_EG_001"
+            }
+          }
+        ],
+        "resolution": {
+          "action": "REJECT",
+          "rejected": ["E_CAND_4"],
+          "required": "RECONSTRUCT_E_WITH_CONSERVATION"
+        },
+        "lssm": { "lit": "0.78" }
+      },
+      "lssm_in_range": true,
+      "loopback_activated": true
+    },
+
+    "gamma_constraints": {
+      "description": "Section 4: Formal constraint set Gamma",
+      "gamma_dimensional": "DIMENSIONAL_CONSISTENCY",
+      "gamma_symmetry": "ISOTROPY_PRESERVATION",
+      "gamma_conservation": "CONSERVATION_FIRST",
+      "gamma_intervention": "INTERVENTION_CONSISTENCY"
+    },
+
+    "omega_search_space": {
+      "description": "Section 4: Restricted operator space",
+      "omega_sro_full": ["SRO_FL", "SRO_TA", "SRO_OM", "SRO_DE"],
+      "omega_allowed": ["SRO_FL", "SRO_TA_DIMENSIONED_ONLY"],
+      "omega_forbidden": ["SRO_OM_ISOTROPY_BREAKING"],
+      "restriction_reason": "SRO_OM violated symmetry baseline in prior iteration (C1 rejection evidence)"
+    },
+
+    "cost_function": {
+      "description": "Section 5: Minimality cost for hypothesis revision",
+      "components": [
+        { "name": "delta_structure",      "weight": { "lit": "0.50" }, "semantic": "AST structural distance from original law" },
+        { "name": "delta_parameter",      "weight": { "lit": "0.30" }, "semantic": "Number and magnitude of new parameters" },
+        { "name": "delta_operator_class", "weight": { "lit": "0.20" }, "semantic": "Operator class change penalty" }
+      ],
+      "optimization": "MINIMIZE",
+      "ordering": "MINIMALITY_FIRST"
+    },
+
+    "constitutional_set": {
+      "description": "Section 6: Constitutional predicates C_set",
+      "predicates": [
+        { "id": "C1", "name": "DIMENSIONAL_COMPATIBILITY",   "scope": "per_law_and_cross_law" },
+        { "id": "C2", "name": "SYMMETRY_CONSISTENCY",        "scope": "cross_law" },
+        { "id": "C3", "name": "CONSERVATION_CONSTRAINTS",    "scope": "set_level" },
+        { "id": "C4", "name": "GAUGE_POTENTIAL_CONTINUITY",  "scope": "cross_law_boundary" },
+        { "id": "C5", "name": "INTERVENTION_CONTRADICTION",  "scope": "cross_law_causal" }
+      ],
+      "promotion_rule": "ACCEPT_SET iff forall C_i in C_set : C_i(L_new) = true",
+      "atomicity": "Either ALL laws promoted together or NONE"
+    },
+
+    "hsc_budget": {
+      "description": "Section 7: Budget and termination from HSC",
+      "event": "HSC_WINDOW_DECISION",
+      "mode": "MODE-2",
+      "lssm": { "lit": "0.78" },
+      "budgets": {
+        "B_RP": { "lit": "0.30" },
+        "B_EP": { "lit": "0.30" },
+        "B_INT": { "lit": "0.80" }
+      },
+      "caps": {
+        "max_candidates": 24,
+        "max_depth": 4,
+        "max_iterations": 4
+      },
+      "termination_conditions": [
+        { "condition": "exists Pi_revised s.t. ACCEPT_SET", "action": "SUCCESS_PROMOTE_AND_SEAL" },
+        { "condition": "iteration_count >= max_iterations",  "action": "REFUSE_AND_HALT" },
+        { "condition": "B_RP exhausted OR B_EP exhausted",   "action": "REFUSE_AND_HALT" },
+        { "condition": "LSSM < tau_halt",                    "action": "EMERGENCY_HALT" }
+      ]
+    },
+
+    "loopback_iterations": {
+      "description": "Section 7.2: Iteration trace — deterministic sequential execution",
+      "iterations": [
+        {
+          "iteration": 1,
+          "candidate_id": "E_CAND_REVISED_1",
+          "rewrite_operator": "SRO_FL",
+          "law_new": {
+            "expression": "F_e = (1 / (4*pi*epsilon0_eff(Z_007))) * (q1*q2) / r^2, with conservation boundary condition",
+            "ast": {
+              "op": "OP_EQ",
+              "args": [
+                { "sym": "F_e" },
+                {
+                  "op": "OP_MUL",
+                  "args": [
+                    {
+                      "op": "OP_DIV",
+                      "args": [
+                        { "lit": "1" },
+                        {
+                          "op": "OP_MUL",
+                          "args": [
+                            { "lit": "4" },
+                            { "sym": "pi" },
+                            {
+                              "op": "APPLY",
+                              "args": [{ "sym": "epsilon0_eff" }, { "zone": "Z_007" }],
+                              "meta": { "dim": [-1, -3, 4, 2, 0, 0, 0], "symmetry": "Liftable_Constant" }
+                            }
+                          ],
+                          "meta": { "dim": [-1, -3, 4, 2, 0, 0, 0], "symmetry": "Scalar" }
+                        }
+                      ],
+                      "meta": { "dim": [1, 3, -4, -2, 0, 0, 0], "symmetry": "Scalar" }
+                    },
+                    {
+                      "op": "OP_DIV",
+                      "args": [
+                        { "op": "OP_MUL", "args": [{ "sym": "q1" }, { "sym": "q2" }], "meta": { "dim": [0, 0, 2, 2, 0, 0, 0], "symmetry": "Scalar" } },
+                        { "op": "OP_POW", "args": [{ "sym": "r" }, { "lit": "2" }], "meta": { "dim": [0, 2, 0, 0, 0, 0, 0], "symmetry": "Scalar" } }
+                      ],
+                      "meta": { "dim": [0, -2, 2, 2, 0, 0, 0], "symmetry": "Scalar" }
+                    }
+                  ],
+                  "meta": { "dim": [1, 1, -2, 0, 0, 0, 0], "symmetry": "Scalar" }
+                }
+              ],
+              "meta": { "dim": [1, 1, -2, 0, 0, 0, 0], "symmetry": "Scalar" }
+            },
+            "definition": {
+              "op": "DEF",
+              "args": [
+                { "op": "APPLY", "args": [{ "sym": "epsilon0_eff" }, { "zone": "Z_007" }], "meta": { "dim": [-1, -3, 4, 2, 0, 0, 0] } },
+                {
+                  "op": "OP_MUL",
+                  "args": [
+                    { "lit": "1.111" },
+                    { "sym": "epsilon0" }
+                  ],
+                  "meta": { "dim": [-1, -3, 4, 2, 0, 0, 0] }
+                }
+              ],
+              "meta": { "dim": [-1, -3, 4, 2, 0, 0, 0] }
+            },
+            "conservation_boundary": {
+              "type": "ENERGY_CONSERVATION_BOUNDARY",
+              "zone_transition": "Z_007 -> Z_exterior",
+              "continuity_enforced": true
+            }
+          },
+          "derivation": {
+            "rule_id": "SRO_FL_ZONE_LIFT_CONSERVATION_v1",
+            "inputs": {
+              "target_constant": "epsilon0",
+              "zone": "Z_007",
+              "lift_type": "SCALE_WITH_CONSERVATION_BOUNDARY",
+              "conservation_constraint": "CLOSED_LOOP_WORK_ZERO"
+            },
+            "justification": "Zone-dependent lift of epsilon0 with enforced conservation at zone boundary"
+          },
+          "cost": {
+            "delta_structure": { "lit": "0.20" },
+            "delta_parameter": { "lit": "0.15" },
+            "delta_operator_class": { "lit": "0.00" },
+            "total": { "lit": "0.145" }
+          },
+          "gate_results": {
+            "rebt": {
+              "event": "REBT_BOUNDARY_CHECK",
+              "operator_id": "SRO_FL",
+              "candidate": "E_CAND_REVISED_1",
+              "verdict": "RP",
+              "reason": "BOUNDARY_PRESERVED",
+              "tolerance_used": { "lit": "1e-12" },
+              "witness": {
+                "type": "INVARIANT_PROOF_STUB",
+                "invariants": ["DIMENSIONAL_CONSISTENCY", "ISOTROPY_PRESERVATION", "ASYMPTOTIC_RECOVERY"],
+                "details_ref": "W_REBT_E_REVISED_001"
+              }
+            },
+            "cad": {
+              "event": "CAD_CURVATURE_CHECK",
+              "trace_id": "CAD_E_REVISED_001",
+              "verdict": "RP_INVARIANT",
+              "omega_est_max": { "lit": "5e-13" },
+              "threshold": { "lit": "1e-10" },
+              "within_bounds": true,
+              "witness": {
+                "type": "CURVATURE_ESTIMATE",
+                "path": ["L_e_active", "SRO_FL", "L_e_revised_1"],
+                "omega_series_ref": "W_CAD_E_REVISED_001"
+              }
+            },
+            "iosp": {
+              "event": "IOSP_RESULT",
+              "proposal_id": "E_CAND_REVISED_1",
+              "intervention_id": "INT_E_REVISED_001",
+              "metric": {
+                "name": "RELATIVE_ERROR",
+                "value": { "lit": "5e-5" },
+                "threshold": { "lit": "1e-3" }
+              },
+              "match": { "lit": "0.99995" },
+              "verdict": "VERIFIED",
+              "computed_from": {
+                "measured_ref": "W_IOSP_MEAS_E_REVISED_001",
+                "predicted_ref": "W_IOSP_PRED_E_REVISED_001"
+              }
+            },
+            "mlr_set": {
+              "event": "MLR_RESOLVE",
+              "case_id": "MLR_EG_001_REVISION_1",
+              "law_set_proposals": ["G_CAND_3", "E_CAND_REVISED_1"],
+              "conflicts": [],
+              "resolution": { "action": "ACCEPT_SET" },
+              "lssm": { "lit": "0.92" }
+            }
+          },
+          "outcome": "ACCEPT_SET"
+        }
+      ],
+      "total_iterations": 1,
+      "trace_ref": "W_LOOPBACK_EG_001"
+    },
+
+    "constitutional_verdict": {
+      "description": "Section 6: All C_i evaluated over L_new",
+      "law_set_new": ["G_CAND_3", "E_CAND_REVISED_1"],
+      "predicate_results": [
+        { "id": "C1", "name": "DIMENSIONAL_COMPATIBILITY",   "result": true },
+        { "id": "C2", "name": "SYMMETRY_CONSISTENCY",        "result": true },
+        { "id": "C3", "name": "CONSERVATION_CONSTRAINTS",    "result": true },
+        { "id": "C4", "name": "GAUGE_POTENTIAL_CONTINUITY",  "result": true },
+        { "id": "C5", "name": "INTERVENTION_CONTRADICTION",  "result": true }
+      ],
+      "all_passed": true,
+      "promotion_authorized": true
+    },
+
+    "finalization": {
+      "cg_promote": {
+        "event": "CG_EVALUATE",
+        "decision": "PROMOTE_LAW_SET",
+        "atomic": true,
+        "inputs": ["REB-T:PASS", "CAD:PASS", "IOSP:VERIFIED", "MLR:ACCEPT_SET", "CONSTITUTIONAL:ALL_PASS"],
+        "promoted": ["G_CAND_3", "E_CAND_REVISED_1"],
+        "rejected": ["E_CAND_4"]
+      },
+      "clp_x_seal": {
+        "event": "CLP_X_COMMIT",
+        "commit_tag": "LOOPBACK_CONSTITUTIONAL_EG_001",
+        "status": "SUCCESS",
+        "payload_hashes": {
+          "registry_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+          "loopback_trace_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+          "constitutional_verdict_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+          "cg_decision_hash": "sha256:__COMPUTED_AT_RUNTIME__"
+        }
+      }
+    },
+
+    "pass_criteria": [
+      "Loopback triggered only when MLR=REJECT AND LSSM in [tau_halt, tau_mode2)",
+      "All candidates generated under Omega_allowed (no forbidden operators used)",
+      "Cost function applied with MINIMALITY_FIRST ordering",
+      "All four gates (REB-T, CAD, iOSp, MLR_set) passed before promotion",
+      "All five constitutional predicates (C1-C5) evaluated and passed",
+      "Promotion is atomic (full law set or nothing)",
+      "Iteration trace complete and deterministic",
+      "Deterministic rerun yields identical hashes"
+    ]
+  }
+}

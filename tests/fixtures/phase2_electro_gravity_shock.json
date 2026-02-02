@@ -269,21 +269,46 @@
     },
 
     "mandatory_loopback": {
+      "spec_ref": "LOOPBACK_FORMAL_SPEC_v1.0",
       "trigger": "MLR_REJECTION",
+      "trigger_predicate": {
+        "mlr_verdict": "REJECT",
+        "lssm_range": {
+          "lower_bound": { "lit": "0.40" },
+          "upper_bound": { "lit": "0.80" },
+          "lower_bound_semantic": "tau_halt",
+          "upper_bound_semantic": "tau_mode2"
+        }
+      },
       "target_law": "coulomb",
-      "constraints": [
-        "CONSERVATION_FIRST",
-        "ISOTROPY_PRESERVATION"
-      ],
-      "allowed_operators": ["SRO_FL", "SRO_TA_DIMENSIONED_ONLY"],
-      "forbidden": ["SRO_OM_ISOTROPY_BREAKING"],
+      "gamma_constraints": {
+        "gamma_dimensional": "DIMENSIONAL_CONSISTENCY",
+        "gamma_symmetry": "ISOTROPY_PRESERVATION",
+        "gamma_conservation": "CONSERVATION_FIRST",
+        "gamma_intervention": "INTERVENTION_CONSISTENCY"
+      },
+      "omega_search_space": {
+        "omega_allowed": ["SRO_FL", "SRO_TA_DIMENSIONED_ONLY"],
+        "omega_forbidden": ["SRO_OM_ISOTROPY_BREAKING"]
+      },
+      "cost_function": {
+        "components": [
+          { "name": "delta_structure",      "weight": { "lit": "0.50" } },
+          { "name": "delta_parameter",      "weight": { "lit": "0.30" } },
+          { "name": "delta_operator_class", "weight": { "lit": "0.20" } }
+        ],
+        "optimization": "MINIMIZE",
+        "ordering": "MINIMALITY_FIRST"
+      },
       "loopback_contract": {
         "deterministic_iteration": true,
         "max_iterations": 4,
-        "termination_conditions": {
-          "success": "MLR returns ACCEPT_SET",
-          "failure": "budgets exhausted -> REFUSE + HALT"
-        },
+        "termination_conditions": [
+          { "condition": "exists Pi_revised s.t. ACCEPT_SET", "action": "SUCCESS_PROMOTE_AND_SEAL" },
+          { "condition": "iteration_count >= max_iterations",  "action": "REFUSE_AND_HALT" },
+          { "condition": "B_RP exhausted OR B_EP exhausted",   "action": "REFUSE_AND_HALT" },
+          { "condition": "LSSM < tau_halt",                    "action": "EMERGENCY_HALT" }
+        ],
         "iteration_trace_required": true,
         "trace_ref": "W_LOOPBACK_EG_001"
       }

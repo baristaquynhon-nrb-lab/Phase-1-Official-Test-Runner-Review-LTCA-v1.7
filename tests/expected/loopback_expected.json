@@ -1,0 +1,177 @@
+{
+  "schema_id": "LTCA_FIXTURE_SCHEMA_v1.0",
+  "doc_type": "expected",
+  "runner": {
+    "runner_id": "LTCA_OFFICIAL_TEST_RUNNER_FULL_SCENARIO_v1_0",
+    "runner_version": "1.0",
+    "ltca_version": "1.7"
+  },
+  "case": {
+    "scenario_id": "LOOPBACK_CONSTITUTIONAL_TEST_001",
+    "phase": 2,
+    "description": "Expected outputs for Loopback as Constrained Hypothesis Revision"
+  },
+  "determinism": {
+    "canonical_json": "RFC8785_subset",
+    "fp_mode": "IEEE754",
+    "numeric_profile": "LTCA_NUMERIC_PROFILE_v1"
+  },
+  "payload": {
+    "trigger_verification": {
+      "mlr_verdict_was_reject": true,
+      "lssm_was_in_range": true,
+      "lssm_value": { "lit": "0.78" },
+      "lssm_lower_bound": { "lit": "0.40" },
+      "lssm_upper_bound": { "lit": "0.80" },
+      "loopback_activated": true
+    },
+
+    "constraint_enforcement": {
+      "gamma_constraints_applied": [
+        "DIMENSIONAL_CONSISTENCY",
+        "ISOTROPY_PRESERVATION",
+        "CONSERVATION_FIRST",
+        "INTERVENTION_CONSISTENCY"
+      ],
+      "omega_allowed_respected": true,
+      "omega_forbidden_not_used": true,
+      "forbidden_operators_checked": ["SRO_OM_ISOTROPY_BREAKING"]
+    },
+
+    "cost_optimization": {
+      "optimization_target": "MINIMIZE",
+      "ordering_used": "MINIMALITY_FIRST",
+      "winning_candidate": "E_CAND_REVISED_1",
+      "winning_cost": { "lit": "0.145" },
+      "cost_breakdown": {
+        "delta_structure": { "lit": "0.20" },
+        "delta_parameter": { "lit": "0.15" },
+        "delta_operator_class": { "lit": "0.00" }
+      }
+    },
+
+    "feasibility_gate_chain": {
+      "candidate": "E_CAND_REVISED_1",
+      "rebt_checker": {
+        "event": "REBT_BOUNDARY_CHECK",
+        "verdict": "RP",
+        "reason": "BOUNDARY_PRESERVED",
+        "tolerance_used": { "lit": "1e-12" },
+        "witness": {
+          "type": "INVARIANT_PROOF_STUB",
+          "invariants": ["DIMENSIONAL_CONSISTENCY", "ISOTROPY_PRESERVATION", "ASYMPTOTIC_RECOVERY"],
+          "details_ref": "W_REBT_E_REVISED_001"
+        }
+      },
+      "cad_curvature": {
+        "event": "CAD_CURVATURE_CHECK",
+        "verdict": "RP_INVARIANT",
+        "omega_est_max": { "lit": "5e-13" },
+        "threshold": { "lit": "1e-10" },
+        "within_bounds": true,
+        "witness": {
+          "type": "CURVATURE_ESTIMATE",
+          "path": ["L_e_active", "SRO_FL", "L_e_revised_1"],
+          "omega_series_ref": "W_CAD_E_REVISED_001"
+        }
+      },
+      "iosp_intervention": {
+        "event": "IOSP_RESULT",
+        "proposal_id": "E_CAND_REVISED_1",
+        "intervention_id": "INT_E_REVISED_001",
+        "metric": {
+          "name": "RELATIVE_ERROR",
+          "value": { "lit": "5e-5" },
+          "threshold": { "lit": "1e-3" }
+        },
+        "match": { "lit": "0.99995" },
+        "verdict": "VERIFIED",
+        "computed_from": {
+          "measured_ref": "W_IOSP_MEAS_E_REVISED_001",
+          "predicted_ref": "W_IOSP_PRED_E_REVISED_001"
+        }
+      },
+      "mlr_set": {
+        "event": "MLR_RESOLVE",
+        "case_id": "MLR_EG_001_REVISION_1",
+        "conflicts": [],
+        "resolution": { "action": "ACCEPT_SET" },
+        "lssm": { "lit": "0.92" }
+      },
+      "all_gates_passed": true
+    },
+
+    "constitutional_verdict": {
+      "predicate_results": [
+        { "id": "C1", "name": "DIMENSIONAL_COMPATIBILITY",   "result": true },
+        { "id": "C2", "name": "SYMMETRY_CONSISTENCY",        "result": true },
+        { "id": "C3", "name": "CONSERVATION_CONSTRAINTS",    "result": true },
+        { "id": "C4", "name": "GAUGE_POTENTIAL_CONTINUITY",  "result": true },
+        { "id": "C5", "name": "INTERVENTION_CONTRADICTION",  "result": true }
+      ],
+      "all_passed": true,
+      "promotion_authorized": true
+    },
+
+    "iteration_trace": {
+      "total_iterations": 1,
+      "max_iterations_allowed": 4,
+      "budget_remaining": {
+        "B_RP": { "lit": "0.25" },
+        "B_EP": { "lit": "0.25" },
+        "B_INT": { "lit": "0.70" }
+      },
+      "termination_reason": "ACCEPT_SET achieved",
+      "trace_ref": "W_LOOPBACK_EG_001",
+      "deterministic": true
+    },
+
+    "cg_decision": {
+      "event": "CG_EVALUATE",
+      "decision": "PROMOTE_LAW_SET",
+      "atomic": true,
+      "inputs": ["REB-T:PASS", "CAD:PASS", "IOSP:VERIFIED", "MLR:ACCEPT_SET", "CONSTITUTIONAL:ALL_PASS"],
+      "promoted": ["G_CAND_3", "E_CAND_REVISED_1"],
+      "rejected": ["E_CAND_4"]
+    },
+
+    "clp_x_seal": {
+      "event": "CLP_X_COMMIT",
+      "commit_tag": "LOOPBACK_CONSTITUTIONAL_EG_001",
+      "status": "SUCCESS",
+      "payload_hashes": {
+        "registry_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+        "loopback_trace_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+        "constitutional_verdict_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+        "cg_decision_hash": "sha256:__COMPUTED_AT_RUNTIME__"
+      }
+    },
+
+    "pass_criteria_results": {
+      "loopback_trigger_correct": true,
+      "omega_allowed_respected": true,
+      "cost_minimality_applied": true,
+      "all_four_gates_passed": true,
+      "all_five_constitutional_predicates_passed": true,
+      "promotion_atomic": true,
+      "iteration_trace_complete": true,
+      "deterministic_rerun_identical_hashes": true
+    },
+
+    "report": {
+      "runner": "LTCA_OFFICIAL_TEST_RUNNER_FULL_SCENARIO_v1_0",
+      "case_id": "LOOPBACK_CONSTITUTIONAL_TEST_001",
+      "verdict": "PASS",
+      "artifacts": {
+        "registry_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+        "loopback_trace_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+        "constitutional_verdict_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+        "cg_decision_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+        "clp_x_commit_hash": "sha256:__COMPUTED_AT_RUNTIME__"
+      },
+      "determinism": {
+        "rerun_hash_equal": true
+      }
+    }
+  }
+}
