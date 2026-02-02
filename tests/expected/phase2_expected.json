@@ -1,0 +1,104 @@
+{
+  "scenario_id": "ELECTRO_GRAVITY_SHOCK_001",
+  "phase": 2,
+  "expected_verdict": "PASS",
+
+  "step_results": {
+    "shock_injection": {
+      "shock_id": "EG_SHOCK_001",
+      "zone": "Z_007",
+      "anomalies_detected": 2,
+      "status": "INJECTED"
+    },
+
+    "parallel_reconstruction": {
+      "gravity": {
+        "proposal_set_id": "PI_L_G_007",
+        "best_candidate": "G_CAND_3",
+        "pipeline_status": {
+          "SRO": "PASS",
+          "REBT_CHECKER": "PASS",
+          "CAD": "PASS",
+          "IOSP": "VERIFIED"
+        }
+      },
+      "coulomb": {
+        "proposal_set_id": "PI_L_E_007",
+        "best_candidate": "E_CAND_4",
+        "pipeline_status": {
+          "SRO": "PASS",
+          "REBT_CHECKER": "PASS",
+          "CAD": "PASS",
+          "IOSP": "VERIFIED"
+        }
+      }
+    },
+
+    "mlr_round_1": {
+      "event": "MLR_RESOLVE",
+      "case_id": "MLR_EG_001",
+      "conflicts_detected": 1,
+      "conflict_class": "C3_CONSERVATION_BREACH",
+      "rejected": ["E_CAND_4"],
+      "resolution": "RECONSTRUCT_E_WITH_CONSERVATION",
+      "lssm": 0.78
+    },
+
+    "hsc_mode_switch": {
+      "event": "HSC_WINDOW_DECISION",
+      "mode": "MODE-2",
+      "lssm": 0.78,
+      "budgets": { "B_RP": 0.30, "B_EP": 0.30, "B_INT": 0.80 },
+      "caps": { "max_candidates": 24, "max_depth": 4 }
+    },
+
+    "loopback_reconstruction": {
+      "target_law": "coulomb",
+      "constraints_applied": ["CONSERVATION_FIRST", "ISOTROPY_PRESERVATION"],
+      "iterations_expected": "1..N (deterministic until ACCEPT or HALT)"
+    },
+
+    "mlr_round_final": {
+      "event": "MLR_RESOLVE",
+      "resolution": "ACCEPT_SET",
+      "lssm": 0.92
+    },
+
+    "cg_decision": {
+      "event": "CG_EVALUATE",
+      "decision": "PROMOTE_LAW_SET",
+      "atomic": true,
+      "laws_promoted": ["G_CAND_3", "E_CAND_CORRECTED"]
+    },
+
+    "clp_x_seal": {
+      "event": "CLP_X_COMMIT",
+      "commit_tag": "MULTI_LAW_EG_SHOCK_001",
+      "lssm": 0.92,
+      "status": "SUCCESS"
+    }
+  },
+
+  "pass_criteria": {
+    "no_law_promoted_if_set_invariants_fail": true,
+    "set_level_commit_atomic": true,
+    "no_partial_promotion": true,
+    "deterministic_rerun_identical_hashes": true
+  },
+
+  "report": {
+    "runner": "LTCA_OFFICIAL_TEST_RUNNER_FULL_SCENARIO_v1_0",
+    "case_id": "ELECTRO_GRAVITY_SHOCK_001",
+    "verdict": "PASS",
+    "artifacts": {
+      "registry_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+      "gravity_proposal_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+      "coulomb_proposal_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+      "mlr_log_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+      "clp_x_commit_hash": "sha256:__COMPUTED_AT_RUNTIME__"
+    },
+    "determinism": {
+      "rerun_hash_equal": true
+    }
+  }
+}

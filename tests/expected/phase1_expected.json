@@ -1,0 +1,96 @@
+{
+  "scenario_id": "G-DRIFT_ANOMALY_001",
+  "phase": 1,
+  "expected_verdict": "PASS",
+
+  "step_results": {
+    "genesis_bootstrap": {
+      "event": "REGISTRY_LOADED",
+      "registry_id": "GENESIS_REGISTRY_001",
+      "status": "OK"
+    },
+
+    "tssp_parse": {
+      "status": "OK",
+      "ase_count": 0,
+      "epistemic_status": "PROPOSAL_ONLY"
+    },
+
+    "sro_candidate_generation": {
+      "proposal_set_id": "PI_L_G_001",
+      "ordering": "MINIMALITY_FIRST",
+      "total_candidates": 3,
+      "results": {
+        "C1": { "rewrite": "SRO_OM", "status": "REJECT", "reason": "symmetry_baseline_violated" },
+        "C2": { "rewrite": "SRO_TA", "status": "REJECT", "reason": "dimensional_inconsistency" },
+        "C3": { "rewrite": "SRO_FL", "status": "KEEP",   "reason": "all_invariants_pass" }
+      },
+      "kept_count": 1,
+      "rejected_count": 2
+    },
+
+    "rebt_checker": {
+      "event": "REBT_BOUNDARY_CHECK",
+      "operator_id": "SRO_FL",
+      "candidate": "C3",
+      "verdict": "RP",
+      "reason": "BOUNDARY_PRESERVED",
+      "tolerance_used": 1e-12
+    },
+
+    "cad_curvature": {
+      "event": "CAD_CURVATURE_CHECK",
+      "trace_id": "CAD_G_001",
+      "verdict": "RP_INVARIANT",
+      "omega_est_max": 1e-12,
+      "threshold": 1e-10,
+      "within_bounds": true
+    },
+
+    "iosp_intervention": {
+      "event": "IOSP_RESULT",
+      "proposal_id": "C3",
+      "intervention": { "do": "m3=10kg", "zone": "Z_001" },
+      "match": 0.9999,
+      "match_threshold": 0.999,
+      "verdict": "VERIFIED"
+    },
+
+    "cg_decision": {
+      "event": "CG_EVALUATE",
+      "proposal_id": "C3",
+      "inputs": ["REB-T:PASS", "CAD:PASS", "iOSp:VERIFIED"],
+      "decision": "PROMOTE_ACTIVE_LAW"
+    },
+
+    "clp_x_seal": {
+      "event": "CLP_X_COMMIT",
+      "commit_tag": "RECONSTRUCT_G_001",
+      "status": "SUCCESS"
+    }
+  },
+
+  "pass_criteria": {
+    "exactly_one_candidate_promoted": true,
+    "all_logs_present": true,
+    "deterministic_rerun_identical_hashes": true
+  },
+
+  "report": {
+    "runner": "LTCA_OFFICIAL_TEST_RUNNER_FULL_SCENARIO_v1_0",
+    "case_id": "G-DRIFT_ANOMALY_001",
+    "verdict": "PASS",
+    "artifacts": {
+      "registry_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+      "proposal_set_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+      "rebt_log_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+      "cad_log_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+      "iosp_log_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+      "cg_decision_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+      "clp_x_commit_hash": "sha256:__COMPUTED_AT_RUNTIME__"
+    },
+    "determinism": {
+      "rerun_hash_equal": true
+    }
+  }
+}

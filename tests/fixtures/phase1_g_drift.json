@@ -1,0 +1,170 @@
+{
+  "scenario_id": "G-DRIFT_ANOMALY_001",
+  "phase": 1,
+  "description": "Single-Law Reconstruction — Newton Gravity with drifting G in zone Z_001",
+
+  "initial_law_vault": {
+    "law_id": "L_g_old",
+    "expression": "F = G * (m1 * m2) / r^2",
+    "ast": [
+      "EQ",
+      "F",
+      ["MUL",
+        "G",
+        ["DIV",
+          ["MUL", "m1", "m2"],
+          ["POW", "r", 2]
+        ]
+      ]
+    ],
+    "status": "ACTIVE_LAW"
+  },
+
+  "observed_drift": {
+    "event_id": "OBS_G_001",
+    "zone": "Z_001",
+    "measurement": {
+      "F_obs": "1.05 * F_calc_standard"
+    },
+    "deltaS": {
+      "type": "SYSTEMATIC_SCALE",
+      "scale": 1.05
+    }
+  },
+
+  "cg_freeze_trigger": {
+    "event": "CG_STATE_UPDATE",
+    "law_id": "L_g_old",
+    "lsi": 0.20,
+    "cg_state": "LAW_UNCERTAIN"
+  },
+
+  "hsc_initial_mode": {
+    "event": "HSC_WINDOW_DECISION",
+    "mode": "MODE-3",
+    "lssm": 0.50,
+    "budgets": {
+      "B_RP": 0.15,
+      "B_EP": 0.10,
+      "B_INT": 1.00
+    }
+  },
+
+  "step_a_tssp": {
+    "input": {
+      "text": "F = G*(m1*m2)/r^2 ; in Z_001 observed F_obs=1.05*F_calc",
+      "lang": "en",
+      "source": "system",
+      "channel": "log"
+    },
+    "expected_output": {
+      "status": "OK",
+      "ase": [],
+      "meta": {
+        "epistemic_status": "PROPOSAL_ONLY"
+      }
+    }
+  },
+
+  "step_b_sro_candidates": {
+    "ordering": "MINIMALITY_FIRST",
+    "deterministic_order": ["SRO_OM", "SRO_TA", "SRO_FL", "SRO_DE"],
+    "candidates": [
+      {
+        "id": "C1",
+        "rewrite": "SRO_OM",
+        "description": "Operator Mutation — mutate r exponent",
+        "expression": "F = G*(m1*m2) / r^(2+delta)",
+        "checks": {
+          "rebt_symmetry_baseline": "VIOLATED",
+          "supporting_evidence": false
+        },
+        "expected_status": "REJECT"
+      },
+      {
+        "id": "C2",
+        "rewrite": "SRO_TA",
+        "description": "Term Addition — additive constant",
+        "expression": "F = G*(m1*m2)/r^2 + alpha",
+        "checks": {
+          "dimensional_consistency": "FAIL",
+          "reason": "alpha not dimensioned as force"
+        },
+        "expected_status": "REJECT"
+      },
+      {
+        "id": "C3",
+        "rewrite": "SRO_FL",
+        "description": "Functional Lifting — lift G to local zone map",
+        "expression": "F = G_eff(Z_001) * (m1*m2) / r^2",
+        "definition": "G_eff(Z_001) = 1.05 * G",
+        "checks": {
+          "dimensional_consistency": "PASS",
+          "isotropy_preservation": "PASS",
+          "asymptotic_recovery": "PASS"
+        },
+        "expected_status": "KEEP"
+      }
+    ],
+    "expected_proposal_set": {
+      "proposal_set_id": "PI_L_G_001",
+      "kept": ["C3"],
+      "rejected": ["C1", "C2"]
+    }
+  },
+
+  "step_c_rebt_checker": {
+    "target_candidate": "C3",
+    "operator_id": "SRO_FL",
+    "validation_set_size": 3,
+    "tolerance": 1e-12,
+    "expected_verdict": {
+      "event": "REBT_BOUNDARY_CHECK",
+      "operator_id": "SRO_FL",
+      "verdict": "RP",
+      "reason": "BOUNDARY_PRESERVED"
+    }
+  },
+
+  "step_d_cad_curvature": {
+    "trace_id": "CAD_G_001",
+    "rewrite_path": "L_g_old --(SRO_FL)--> L_g_new",
+    "expected_verdict": {
+      "event": "CAD_CURVATURE_CHECK",
+      "trace_id": "CAD_G_001",
+      "verdict": "RP_INVARIANT",
+      "omega_est": 1e-12,
+      "threshold": 1e-10
+    }
+  },
+
+  "step_e_iosp_intervention": {
+    "intervention": {
+      "do": "m3=10kg",
+      "zone": "Z_001"
+    },
+    "expected_verdict": {
+      "event": "IOSP_RESULT",
+      "proposal_id": "C3",
+      "match": 0.9999,
+      "verdict": "VERIFIED"
+    }
+  },
+
+  "step_f_cg_decision": {
+    "expected_verdict": {
+      "event": "CG_EVALUATE",
+      "proposal_id": "C3",
+      "inputs": ["REB-T:PASS", "CAD:PASS", "iOSp:VERIFIED"],
+      "decision": "PROMOTE_ACTIVE_LAW"
+    }
+  },
+
+  "step_g_clp_x_seal": {
+    "expected_verdict": {
+      "event": "CLP_X_COMMIT",
+      "commit_tag": "RECONSTRUCT_G_001",
+      "status": "SUCCESS"
+    }
+  }
+}

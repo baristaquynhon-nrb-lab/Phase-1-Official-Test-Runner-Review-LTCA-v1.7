@@ -1,0 +1,132 @@
+{
+  "scenario_id": "ELECTRO_GRAVITY_SHOCK_001",
+  "phase": 2,
+  "description": "Multi-Law Stress Test — Simultaneous gravity and Coulomb drift in zone Z_007",
+
+  "shock_injection": {
+    "shock_id": "EG_SHOCK_001",
+    "zone": "Z_007",
+    "anomalies": [
+      {
+        "law": "gravity",
+        "law_id": "L_g_active",
+        "type": "SCALE",
+        "scale": 1.05
+      },
+      {
+        "law": "coulomb",
+        "law_id": "L_e_active",
+        "type": "SCALE",
+        "scale": 0.90
+      }
+    ]
+  },
+
+  "parallel_reconstruction": {
+    "proposal_sets": [
+      {
+        "id": "PI_L_G_007",
+        "law": "gravity",
+        "pipeline": ["SRO", "REBT_CHECKER", "CAD", "IOSP"],
+        "best_candidate": "G_CAND_3",
+        "rewrite_operator": "SRO_FL",
+        "expression": "F_g = G_eff(Z_007) * (m1*m2) / r^2",
+        "definition": "G_eff(Z_007) = 1.05 * G"
+      },
+      {
+        "id": "PI_L_E_007",
+        "law": "coulomb",
+        "pipeline": ["SRO", "REBT_CHECKER", "CAD", "IOSP"],
+        "best_candidate": "E_CAND_4",
+        "rewrite_operator": "SRO_FL",
+        "expression": "F_e = (1 / (4*pi*epsilon0_eff(Z_007))) * (q1*q2) / r^2",
+        "definition": "epsilon0_eff(Z_007) = epsilon0 / 0.90"
+      }
+    ]
+  },
+
+  "mlr_invocation": {
+    "mlr_case_id": "MLR_EG_001",
+    "zone": "Z_007",
+    "law_set_proposals": ["G_CAND_3", "E_CAND_4"],
+    "strategy": "P1_CONSERVATION_FIRST",
+    "checks": [
+      "dimensional_compatibility_across_set",
+      "global_conservation_constraints",
+      "symmetry_consistency_colocated_fields",
+      "intervention_contradiction_cross_law"
+    ],
+    "round_1_verdict": {
+      "event": "MLR_RESOLVE",
+      "case_id": "MLR_EG_001",
+      "conflicts": [
+        {
+          "class": "C3_CONSERVATION_BREACH",
+          "law": "E_CAND_4",
+          "detail": "Proposed epsilon0 rescaling violates local energy conservation at Z_007 boundary"
+        }
+      ],
+      "resolution": {
+        "action": "REJECT",
+        "rejected": ["E_CAND_4"],
+        "required": "RECONSTRUCT_E_WITH_CONSERVATION"
+      },
+      "lssm": 0.78
+    }
+  },
+
+  "hsc_reaction": {
+    "event": "HSC_WINDOW_DECISION",
+    "mode": "MODE-2",
+    "lssm": 0.78,
+    "budgets": {
+      "B_RP": 0.30,
+      "B_EP": 0.30,
+      "B_INT": 0.80
+    },
+    "caps": {
+      "max_candidates": 24,
+      "max_depth": 4
+    }
+  },
+
+  "mandatory_loopback": {
+    "trigger": "MLR_REJECTION",
+    "target_law": "coulomb",
+    "constraints": [
+      "CONSERVATION_FIRST",
+      "ISOTROPY_PRESERVATION"
+    ],
+    "allowed_operators": ["SRO_FL", "SRO_TA_DIMENSIONED_ONLY"],
+    "forbidden": ["SRO_OM_ISOTROPY_BREAKING"],
+    "termination_conditions": {
+      "success": "MLR returns ACCEPT_SET",
+      "failure": "budgets exhausted → REFUSE + HALT"
+    }
+  },
+
+  "finalization": {
+    "mlr_accept": {
+      "event": "MLR_RESOLVE",
+      "resolution": { "action": "ACCEPT_SET" },
+      "lssm": 0.92
+    },
+    "cg_promote": {
+      "event": "CG_EVALUATE",
+      "decision": "PROMOTE_LAW_SET",
+      "atomic": true
+    },
+    "clp_x_seal": {
+      "event": "CLP_X_COMMIT",
+      "commit_tag": "MULTI_LAW_EG_SHOCK_001",
+      "lssm": 0.92,
+      "status": "SUCCESS"
+    }
+  },
+
+  "pass_criteria": [
+    "No law promoted if set-level invariants fail",
+    "Set-level commit is atomic (no partial promotion)",
+    "Deterministic rerun yields identical commit hashes"
+  ]
+}
