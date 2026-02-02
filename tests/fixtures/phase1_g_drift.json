@@ -1,170 +1,438 @@
 {
-  "scenario_id": "G-DRIFT_ANOMALY_001",
-  "phase": 1,
-  "description": "Single-Law Reconstruction — Newton Gravity with drifting G in zone Z_001",
-
-  "initial_law_vault": {
-    "law_id": "L_g_old",
-    "expression": "F = G * (m1 * m2) / r^2",
-    "ast": [
-      "EQ",
-      "F",
-      ["MUL",
-        "G",
-        ["DIV",
-          ["MUL", "m1", "m2"],
-          ["POW", "r", 2]
-        ]
-      ]
-    ],
-    "status": "ACTIVE_LAW"
+  "schema_id": "LTCA_FIXTURE_SCHEMA_v1.0",
+  "doc_type": "fixture",
+  "runner": {
+    "runner_id": "LTCA_OFFICIAL_TEST_RUNNER_FULL_SCENARIO_v1_0",
+    "runner_version": "1.0",
+    "ltca_version": "1.7"
   },
-
-  "observed_drift": {
-    "event_id": "OBS_G_001",
-    "zone": "Z_001",
-    "measurement": {
-      "F_obs": "1.05 * F_calc_standard"
-    },
-    "deltaS": {
-      "type": "SYSTEMATIC_SCALE",
-      "scale": 1.05
-    }
+  "case": {
+    "scenario_id": "G-DRIFT_ANOMALY_001",
+    "phase": 1,
+    "description": "Single-Law Reconstruction — Newton Gravity with drifting G in zone Z_001"
   },
-
-  "cg_freeze_trigger": {
-    "event": "CG_STATE_UPDATE",
-    "law_id": "L_g_old",
-    "lsi": 0.20,
-    "cg_state": "LAW_UNCERTAIN"
+  "determinism": {
+    "canonical_json": "RFC8785_subset",
+    "fp_mode": "IEEE754",
+    "numeric_profile": "LTCA_NUMERIC_PROFILE_v1"
   },
-
-  "hsc_initial_mode": {
-    "event": "HSC_WINDOW_DECISION",
-    "mode": "MODE-3",
-    "lssm": 0.50,
-    "budgets": {
-      "B_RP": 0.15,
-      "B_EP": 0.10,
-      "B_INT": 1.00
-    }
-  },
-
-  "step_a_tssp": {
-    "input": {
-      "text": "F = G*(m1*m2)/r^2 ; in Z_001 observed F_obs=1.05*F_calc",
-      "lang": "en",
-      "source": "system",
-      "channel": "log"
-    },
-    "expected_output": {
-      "status": "OK",
-      "ase": [],
-      "meta": {
-        "epistemic_status": "PROPOSAL_ONLY"
-      }
-    }
-  },
-
-  "step_b_sro_candidates": {
-    "ordering": "MINIMALITY_FIRST",
-    "deterministic_order": ["SRO_OM", "SRO_TA", "SRO_FL", "SRO_DE"],
-    "candidates": [
-      {
-        "id": "C1",
-        "rewrite": "SRO_OM",
-        "description": "Operator Mutation — mutate r exponent",
-        "expression": "F = G*(m1*m2) / r^(2+delta)",
-        "checks": {
-          "rebt_symmetry_baseline": "VIOLATED",
-          "supporting_evidence": false
-        },
-        "expected_status": "REJECT"
+  "payload": {
+    "initial_law_vault": {
+      "law_id": "L_g_old",
+      "expression": "F = G * (m1 * m2) / r^2",
+      "ast": {
+        "op": "OP_EQ",
+        "args": [
+          { "sym": "F" },
+          {
+            "op": "OP_MUL",
+            "args": [
+              { "sym": "G" },
+              {
+                "op": "OP_DIV",
+                "args": [
+                  {
+                    "op": "OP_MUL",
+                    "args": [
+                      { "sym": "m1" },
+                      { "sym": "m2" }
+                    ],
+                    "meta": { "dim": [2, 0, 0, 0, 0, 0, 0], "symmetry": "Scalar" }
+                  },
+                  {
+                    "op": "OP_POW",
+                    "args": [
+                      { "sym": "r" },
+                      { "lit": "2" }
+                    ],
+                    "meta": { "dim": [0, 2, 0, 0, 0, 0, 0], "symmetry": "Scalar" }
+                  }
+                ],
+                "meta": { "dim": [2, -2, 0, 0, 0, 0, 0], "symmetry": "Scalar" }
+              }
+            ],
+            "meta": { "dim": [1, 1, -2, 0, 0, 0, 0], "symmetry": "Scalar", "source": "GRTM" }
+          }
+        ],
+        "meta": { "dim": [1, 1, -2, 0, 0, 0, 0], "symmetry": "Scalar" }
       },
-      {
-        "id": "C2",
-        "rewrite": "SRO_TA",
-        "description": "Term Addition — additive constant",
-        "expression": "F = G*(m1*m2)/r^2 + alpha",
-        "checks": {
-          "dimensional_consistency": "FAIL",
-          "reason": "alpha not dimensioned as force"
-        },
-        "expected_status": "REJECT"
+      "status": "ACTIVE_LAW"
+    },
+
+    "observed_drift": {
+      "event_id": "OBS_G_001",
+      "zone": "Z_001",
+      "deltaS": {
+        "type": "SYSTEMATIC_SCALE",
+        "params": {
+          "affected_constant": "G",
+          "zone": "Z_001"
+        }
       },
-      {
-        "id": "C3",
-        "rewrite": "SRO_FL",
-        "description": "Functional Lifting — lift G to local zone map",
-        "expression": "F = G_eff(Z_001) * (m1*m2) / r^2",
-        "definition": "G_eff(Z_001) = 1.05 * G",
-        "checks": {
-          "dimensional_consistency": "PASS",
-          "isotropy_preservation": "PASS",
-          "asymptotic_recovery": "PASS"
-        },
-        "expected_status": "KEEP"
+      "measurement_model": {
+        "type": "SCALE_RELATIVE_TO_BASELINE",
+        "baseline": "F_calc_standard",
+        "scale": { "lit": "1.05" }
+      },
+      "residual_metric": {
+        "metric": "RELATIVE_ERROR",
+        "epsilon": { "lit": "1e-12" }
       }
-    ],
-    "expected_proposal_set": {
+    },
+
+    "cg_freeze_trigger": {
+      "event": "CG_STATE_UPDATE",
+      "law_id": "L_g_old",
+      "lsi": { "lit": "0.20" },
+      "cg_state": "LAW_UNCERTAIN"
+    },
+
+    "hsc_initial_mode": {
+      "event": "HSC_WINDOW_DECISION",
+      "mode": "MODE-3",
+      "lssm": { "lit": "0.50" },
+      "budgets": {
+        "B_RP": { "lit": "0.15" },
+        "B_EP": { "lit": "0.10" },
+        "B_INT": { "lit": "1.00" }
+      },
+      "caps": {
+        "max_candidates": 12,
+        "max_depth": 3,
+        "max_iterations": 3
+      },
+      "freeze_policy": {
+        "condition": "CG == LAW_UNCERTAIN AND LSSM < threshold",
+        "action": "FREEZE_EP_OPERATIONS"
+      }
+    },
+
+    "step_a_tssp": {
+      "input": {
+        "text": "F = G*(m1*m2)/r^2 ; in Z_001 observed F_obs=1.05*F_calc",
+        "lang": "en",
+        "source": "system",
+        "channel": "log"
+      },
+      "expected_output": {
+        "status": "OK",
+        "ase": [],
+        "meta": {
+          "epistemic_status": "PROPOSAL_ONLY"
+        }
+      }
+    },
+
+    "step_b_sro_candidates": {
       "proposal_set_id": "PI_L_G_001",
-      "kept": ["C3"],
-      "rejected": ["C1", "C2"]
-    }
-  },
-
-  "step_c_rebt_checker": {
-    "target_candidate": "C3",
-    "operator_id": "SRO_FL",
-    "validation_set_size": 3,
-    "tolerance": 1e-12,
-    "expected_verdict": {
-      "event": "REBT_BOUNDARY_CHECK",
-      "operator_id": "SRO_FL",
-      "verdict": "RP",
-      "reason": "BOUNDARY_PRESERVED"
-    }
-  },
-
-  "step_d_cad_curvature": {
-    "trace_id": "CAD_G_001",
-    "rewrite_path": "L_g_old --(SRO_FL)--> L_g_new",
-    "expected_verdict": {
-      "event": "CAD_CURVATURE_CHECK",
-      "trace_id": "CAD_G_001",
-      "verdict": "RP_INVARIANT",
-      "omega_est": 1e-12,
-      "threshold": 1e-10
-    }
-  },
-
-  "step_e_iosp_intervention": {
-    "intervention": {
-      "do": "m3=10kg",
-      "zone": "Z_001"
+      "ordering": "MINIMALITY_FIRST",
+      "deterministic_order": ["SRO_OM", "SRO_TA", "SRO_FL", "SRO_DE"],
+      "candidates": [
+        {
+          "id": "C1",
+          "rewrite": "SRO_OM",
+          "description": "Operator Mutation — mutate r exponent",
+          "minimality_cost": { "lit": "2.50" },
+          "law_new": {
+            "expression": "F = G*(m1*m2) / r^(2+delta)",
+            "ast": {
+              "op": "OP_EQ",
+              "args": [
+                { "sym": "F" },
+                {
+                  "op": "OP_MUL",
+                  "args": [
+                    { "sym": "G" },
+                    {
+                      "op": "OP_DIV",
+                      "args": [
+                        {
+                          "op": "OP_MUL",
+                          "args": [
+                            { "sym": "m1" },
+                            { "sym": "m2" }
+                          ],
+                          "meta": { "dim": [2, 0, 0, 0, 0, 0, 0], "symmetry": "Scalar" }
+                        },
+                        {
+                          "op": "OP_POW",
+                          "args": [
+                            { "sym": "r" },
+                            {
+                              "op": "OP_ADD",
+                              "args": [
+                                { "lit": "2" },
+                                { "sym": "delta" }
+                              ],
+                              "meta": { "dim": [0, 0, 0, 0, 0, 0, 0], "symmetry": "Scalar" }
+                            }
+                          ],
+                          "meta": { "dim": [0, -1, 0, 0, 0, 0, 0], "symmetry": "UNKNOWN" }
+                        }
+                      ],
+                      "meta": { "dim": [2, -1, 0, 0, 0, 0, 0], "symmetry": "UNKNOWN" }
+                    }
+                  ],
+                  "meta": { "dim": [1, 2, -2, 0, 0, 0, 0], "symmetry": "UNKNOWN" }
+                }
+              ],
+              "meta": { "dim": [1, 2, -2, 0, 0, 0, 0], "symmetry": "UNKNOWN" }
+            }
+          },
+          "derivation": {
+            "rule_id": "SRO_OM_POWER_MUTATION_v1",
+            "inputs": { "target_node": "POW_exponent", "mutation": "add_delta" },
+            "justification": "Attempt power-law index shift"
+          },
+          "rebt_prechecks": {
+            "dimensional_consistency": "UNKNOWN",
+            "symmetry_baseline": "FAIL",
+            "asymptotic_recovery": "UNKNOWN"
+          },
+          "expected_status": "REJECT"
+        },
+        {
+          "id": "C2",
+          "rewrite": "SRO_TA",
+          "description": "Term Addition — additive constant",
+          "minimality_cost": { "lit": "1.80" },
+          "law_new": {
+            "expression": "F = G*(m1*m2)/r^2 + alpha",
+            "ast": {
+              "op": "OP_EQ",
+              "args": [
+                { "sym": "F" },
+                {
+                  "op": "OP_ADD",
+                  "args": [
+                    {
+                      "op": "OP_MUL",
+                      "args": [
+                        { "sym": "G" },
+                        {
+                          "op": "OP_DIV",
+                          "args": [
+                            {
+                              "op": "OP_MUL",
+                              "args": [
+                                { "sym": "m1" },
+                                { "sym": "m2" }
+                              ],
+                              "meta": { "dim": [2, 0, 0, 0, 0, 0, 0], "symmetry": "Scalar" }
+                            },
+                            {
+                              "op": "OP_POW",
+                              "args": [
+                                { "sym": "r" },
+                                { "lit": "2" }
+                              ],
+                              "meta": { "dim": [0, 2, 0, 0, 0, 0, 0], "symmetry": "Scalar" }
+                            }
+                          ],
+                          "meta": { "dim": [2, -2, 0, 0, 0, 0, 0], "symmetry": "Scalar" }
+                        }
+                      ],
+                      "meta": { "dim": [1, 1, -2, 0, 0, 0, 0], "symmetry": "Scalar" }
+                    },
+                    { "sym": "alpha" }
+                  ],
+                  "meta": { "dim": null, "symmetry": "INCONSISTENT" }
+                }
+              ],
+              "meta": { "dim": null, "symmetry": "INCONSISTENT" }
+            }
+          },
+          "derivation": {
+            "rule_id": "SRO_TA_ADDITIVE_CONST_v1",
+            "inputs": { "target_node": "RHS", "addition": "alpha" },
+            "justification": "Attempt additive correction term"
+          },
+          "rebt_prechecks": {
+            "dimensional_consistency": "FAIL",
+            "symmetry_baseline": "UNKNOWN",
+            "asymptotic_recovery": "UNKNOWN"
+          },
+          "expected_status": "REJECT"
+        },
+        {
+          "id": "C3",
+          "rewrite": "SRO_FL",
+          "description": "Functional Lifting — lift G to local zone map",
+          "minimality_cost": { "lit": "1.20" },
+          "law_new": {
+            "expression": "F = G_eff(Z_001) * (m1*m2) / r^2",
+            "ast": {
+              "op": "OP_EQ",
+              "args": [
+                { "sym": "F" },
+                {
+                  "op": "OP_MUL",
+                  "args": [
+                    {
+                      "op": "APPLY",
+                      "args": [
+                        { "sym": "G_eff" },
+                        { "zone": "Z_001" }
+                      ],
+                      "meta": { "dim": [-1, 3, -2, 0, 0, 0, 0], "symmetry": "Liftable_Constant", "source": "SRO_FL" }
+                    },
+                    {
+                      "op": "OP_DIV",
+                      "args": [
+                        {
+                          "op": "OP_MUL",
+                          "args": [
+                            { "sym": "m1" },
+                            { "sym": "m2" }
+                          ],
+                          "meta": { "dim": [2, 0, 0, 0, 0, 0, 0], "symmetry": "Scalar" }
+                        },
+                        {
+                          "op": "OP_POW",
+                          "args": [
+                            { "sym": "r" },
+                            { "lit": "2" }
+                          ],
+                          "meta": { "dim": [0, 2, 0, 0, 0, 0, 0], "symmetry": "Scalar" }
+                        }
+                      ],
+                      "meta": { "dim": [2, -2, 0, 0, 0, 0, 0], "symmetry": "Scalar" }
+                    }
+                  ],
+                  "meta": { "dim": [1, 1, -2, 0, 0, 0, 0], "symmetry": "Scalar", "source": "GRTM" }
+                }
+              ],
+              "meta": { "dim": [1, 1, -2, 0, 0, 0, 0], "symmetry": "Scalar" }
+            },
+            "definition": {
+              "op": "DEF",
+              "args": [
+                {
+                  "op": "APPLY",
+                  "args": [
+                    { "sym": "G_eff" },
+                    { "zone": "Z_001" }
+                  ],
+                  "meta": { "dim": [-1, 3, -2, 0, 0, 0, 0], "symmetry": "Liftable_Constant" }
+                },
+                {
+                  "op": "OP_MUL",
+                  "args": [
+                    { "lit": "1.05" },
+                    { "sym": "G" }
+                  ],
+                  "meta": { "dim": [-1, 3, -2, 0, 0, 0, 0], "symmetry": "Liftable_Constant" }
+                }
+              ],
+              "meta": { "dim": [-1, 3, -2, 0, 0, 0, 0] }
+            }
+          },
+          "derivation": {
+            "rule_id": "SRO_FL_ZONE_LIFT_v1",
+            "inputs": {
+              "target_constant": "G",
+              "zone": "Z_001",
+              "lift_type": "SCALE_BY_ZONE"
+            },
+            "justification": "Lift constant G to zone-dependent function G_eff(Z) preserving dimension and isotropy"
+          },
+          "rebt_prechecks": {
+            "dimensional_consistency": "PASS",
+            "symmetry_baseline": "PASS",
+            "asymptotic_recovery": "PASS"
+          },
+          "expected_status": "KEEP"
+        }
+      ]
     },
-    "expected_verdict": {
-      "event": "IOSP_RESULT",
-      "proposal_id": "C3",
-      "match": 0.9999,
-      "verdict": "VERIFIED"
-    }
-  },
 
-  "step_f_cg_decision": {
-    "expected_verdict": {
-      "event": "CG_EVALUATE",
-      "proposal_id": "C3",
-      "inputs": ["REB-T:PASS", "CAD:PASS", "iOSp:VERIFIED"],
-      "decision": "PROMOTE_ACTIVE_LAW"
-    }
-  },
+    "step_c_rebt_checker": {
+      "target_candidate": "C3",
+      "operator_id": "SRO_FL",
+      "validation_set_size": 3,
+      "tolerance": { "lit": "1e-12" },
+      "expected_verdict": {
+        "event": "REBT_BOUNDARY_CHECK",
+        "operator_id": "SRO_FL",
+        "candidate": "C3",
+        "verdict": "RP",
+        "reason": "BOUNDARY_PRESERVED",
+        "tolerance_used": { "lit": "1e-12" },
+        "witness": {
+          "type": "INVARIANT_PROOF_STUB",
+          "invariants": ["DIMENSIONAL_CONSISTENCY", "ISOTROPY_PRESERVATION", "ASYMPTOTIC_RECOVERY"],
+          "details_ref": "W_REBT_G_001"
+        }
+      }
+    },
 
-  "step_g_clp_x_seal": {
-    "expected_verdict": {
-      "event": "CLP_X_COMMIT",
-      "commit_tag": "RECONSTRUCT_G_001",
-      "status": "SUCCESS"
+    "step_d_cad_curvature": {
+      "trace_id": "CAD_G_001",
+      "rewrite_path": ["L_g_old", "SRO_FL", "L_g_new"],
+      "expected_verdict": {
+        "event": "CAD_CURVATURE_CHECK",
+        "trace_id": "CAD_G_001",
+        "verdict": "RP_INVARIANT",
+        "omega_est_max": { "lit": "1e-12" },
+        "threshold": { "lit": "1e-10" },
+        "within_bounds": true,
+        "witness": {
+          "type": "CURVATURE_ESTIMATE",
+          "path": ["L_g_old", "SRO_FL", "L_g_new"],
+          "omega_series_ref": "W_CAD_G_001"
+        }
+      }
+    },
+
+    "step_e_iosp_intervention": {
+      "intervention": {
+        "intervention_id": "INT_G_001",
+        "do": [
+          { "var": "m3", "set": { "lit": "10" }, "unit": "kg" }
+        ],
+        "zone": "Z_001",
+        "observables": ["F"]
+      },
+      "expected_verdict": {
+        "event": "IOSP_RESULT",
+        "proposal_id": "C3",
+        "intervention_id": "INT_G_001",
+        "metric": {
+          "name": "RELATIVE_ERROR",
+          "value": { "lit": "1e-4" },
+          "threshold": { "lit": "1e-3" }
+        },
+        "match": { "lit": "0.9999" },
+        "verdict": "VERIFIED",
+        "computed_from": {
+          "measured_ref": "W_IOSP_MEAS_G_001",
+          "predicted_ref": "W_IOSP_PRED_G_001"
+        }
+      }
+    },
+
+    "step_f_cg_decision": {
+      "expected_verdict": {
+        "event": "CG_EVALUATE",
+        "decision": "PROMOTE_ACTIVE_LAW",
+        "atomic": true,
+        "inputs": ["REB-T:PASS", "CAD:PASS", "IOSP:VERIFIED"],
+        "promoted": ["C3"],
+        "rejected": ["C1", "C2"]
+      }
+    },
+
+    "step_g_clp_x_seal": {
+      "expected_verdict": {
+        "event": "CLP_X_COMMIT",
+        "commit_tag": "RECONSTRUCT_G_001",
+        "status": "SUCCESS",
+        "payload_hashes": {
+          "registry_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+          "proposal_set_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+          "cg_decision_hash": "sha256:__COMPUTED_AT_RUNTIME__"
+        }
+      }
     }
   }
 }

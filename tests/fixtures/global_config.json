@@ -1,43 +1,54 @@
 {
-  "ltca_version": "1.7",
-  "runner_id": "LTCA_OFFICIAL_TEST_RUNNER_FULL_SCENARIO_v1_0",
-  "runner_version": "1.0",
+  "schema_id": "LTCA_FIXTURE_SCHEMA_v1.0",
+  "doc_type": "fixture",
+  "runner": {
+    "runner_id": "LTCA_OFFICIAL_TEST_RUNNER_FULL_SCENARIO_v1_0",
+    "runner_version": "1.0",
+    "ltca_version": "1.7"
+  },
+  "case": {
+    "scenario_id": "GLOBAL_CONFIG",
+    "phase": 0,
+    "description": "Global runner configuration, thresholds, and enforcement order"
+  },
   "determinism": {
-    "no_randomness": true,
+    "canonical_json": "RFC8785_subset",
     "fp_mode": "IEEE754",
-    "canonical_json": "RFC8785_subset"
+    "numeric_profile": "LTCA_NUMERIC_PROFILE_v1"
   },
-  "thresholds": {
-    "rebt_epsilon": 1e-12,
-    "cad_omega": 1e-10,
-    "lssm_mode2": 0.80,
-    "lssm_emergency": 0.60,
-    "lssm_halt": 0.40
-  },
-  "module_requirements": [
-    "TSSP v1.0",
-    "SRT v1.x",
-    "SRO v1.0",
-    "REB-T Checker v1.0",
-    "CAD v1.0",
-    "MLR v1.0",
-    "iOSp v1.x",
-    "CG v1.x",
-    "CLP-X v1.x",
-    "HSC v1.0"
-  ],
-  "enforcement_order": [
-    "SRO_CANDIDATE_GENERATION",
-    "REBT_CHECKER",
-    "CAD_CURVATURE",
-    "MLR_SET_LEVEL",
-    "IOSP_INTERVENTION",
-    "CG_FINAL_APPROVAL",
-    "CLP_X_REPO_SEAL"
-  ],
-  "execution_freeze_rule": {
-    "condition": "CG == LAW_UNCERTAIN AND LSSM < threshold",
-    "action": "FREEZE_EP_OPERATIONS",
-    "scheduling": "HSC_ONLY"
+  "payload": {
+    "thresholds": {
+      "rebt_epsilon": { "lit": "1e-12" },
+      "cad_omega": { "lit": "1e-10" },
+      "lssm_mode2": { "lit": "0.80" },
+      "lssm_emergency": { "lit": "0.60" },
+      "lssm_halt": { "lit": "0.40" }
+    },
+    "module_requirements": [
+      { "module": "TSSP",          "version": "1.0" },
+      { "module": "SRT",           "version": "1.x" },
+      { "module": "SRO",           "version": "1.0" },
+      { "module": "REB-T Checker", "version": "1.0" },
+      { "module": "CAD",           "version": "1.0" },
+      { "module": "MLR",           "version": "1.0" },
+      { "module": "iOSp",          "version": "1.x" },
+      { "module": "CG",            "version": "1.x" },
+      { "module": "CLP-X",         "version": "1.x" },
+      { "module": "HSC",           "version": "1.0" }
+    ],
+    "enforcement_order": [
+      "SRO_CANDIDATE_GENERATION",
+      "REBT_CHECKER",
+      "CAD_CURVATURE",
+      "MLR_SET_LEVEL",
+      "IOSP_INTERVENTION",
+      "CG_FINAL_APPROVAL",
+      "CLP_X_REPO_SEAL"
+    ],
+    "execution_freeze_rule": {
+      "condition": "CG == LAW_UNCERTAIN AND LSSM < threshold",
+      "action": "FREEZE_EP_OPERATIONS",
+      "scheduling": "HSC_ONLY"
+    }
   }
 }

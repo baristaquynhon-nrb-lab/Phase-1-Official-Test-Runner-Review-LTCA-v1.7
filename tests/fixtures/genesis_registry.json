@@ -1,53 +1,76 @@
 {
-  "event": "REGISTRY_LOADED",
-  "registry_id": "GENESIS_REGISTRY_001",
-  "grtm": {
-    "registry_id": "GRTM_v1.0",
-    "terminals": {
-      "m": {
-        "dim": [1, 0, 0, 0, 0, 0, 0],
-        "symmetry": "Scalar",
-        "description": "Mass"
-      },
-      "r": {
-        "dim": [0, 1, 0, 0, 0, 0, 0],
-        "symmetry": "Vector_Norm",
-        "description": "Radial distance"
-      },
-      "G": {
-        "dim": [-1, 3, -2, 0, 0, 0, 0],
-        "symmetry": "Liftable_Constant",
-        "description": "Gravitational constant"
-      },
-      "q": {
-        "dim": [0, 0, 1, 1, 0, 0, 0],
-        "symmetry": "Scalar",
-        "description": "Electric charge"
-      },
-      "epsilon0": {
-        "dim": [-1, -3, 4, 2, 0, 0, 0],
-        "symmetry": "Liftable_Constant",
-        "description": "Vacuum permittivity"
-      }
-    },
-    "operators": {
-      "OP_ADD": { "arity": 2, "commutative": true },
-      "OP_MUL": { "arity": 2, "commutative": true },
-      "OP_DIV": { "arity": 2, "commutative": false },
-      "OP_POW": { "arity": 2, "constraint": "exponent_dimensionless" },
-      "SRO_FL": { "type": "rewrite", "class": "Functional_Lifting" },
-      "SRO_TA": { "type": "rewrite", "class": "Term_Addition" },
-      "SRO_OM": { "type": "rewrite", "class": "Operator_Mutation" },
-      "SRO_DE": { "type": "rewrite", "class": "Dimensional_Extension" }
-    },
-    "invariants": [
-      "DIMENSIONAL_CONSISTENCY",
-      "ISOTROPY_PRESERVATION",
-      "ASYMPTOTIC_RECOVERY"
-    ]
+  "schema_id": "LTCA_FIXTURE_SCHEMA_v1.0",
+  "doc_type": "fixture",
+  "runner": {
+    "runner_id": "LTCA_OFFICIAL_TEST_RUNNER_FULL_SCENARIO_v1_0",
+    "runner_version": "1.0",
+    "ltca_version": "1.7"
   },
-  "clp_x_bootstrap": {
-    "event": "CLP_X_GENESIS",
-    "runner_version": "1.0"
+  "case": {
+    "scenario_id": "GENESIS_BOOTSTRAP",
+    "phase": 0,
+    "description": "Genesis Root Token Map (GRTM v1.0) and Operator Registry"
+  },
+  "determinism": {
+    "canonical_json": "RFC8785_subset",
+    "fp_mode": "IEEE754",
+    "numeric_profile": "LTCA_NUMERIC_PROFILE_v1"
+  },
+  "payload": {
+    "event": "REGISTRY_LOADED",
+    "registry_id": "GENESIS_REGISTRY_001",
+    "grtm": {
+      "registry_id": "GRTM_v1.0",
+      "terminals": {
+        "m": {
+          "dim": [1, 0, 0, 0, 0, 0, 0],
+          "symmetry": "Scalar",
+          "description": "Mass"
+        },
+        "r": {
+          "dim": [0, 1, 0, 0, 0, 0, 0],
+          "symmetry": "Vector_Norm",
+          "description": "Radial distance"
+        },
+        "G": {
+          "dim": [-1, 3, -2, 0, 0, 0, 0],
+          "symmetry": "Liftable_Constant",
+          "description": "Gravitational constant"
+        },
+        "q": {
+          "dim": [0, 0, 1, 1, 0, 0, 0],
+          "symmetry": "Scalar",
+          "description": "Electric charge"
+        },
+        "epsilon0": {
+          "dim": [-1, -3, 4, 2, 0, 0, 0],
+          "symmetry": "Liftable_Constant",
+          "description": "Vacuum permittivity"
+        }
+      },
+      "operators": {
+        "OP_ADD": { "arity": 2, "commutative": true },
+        "OP_MUL": { "arity": 2, "commutative": true },
+        "OP_DIV": { "arity": 2, "commutative": false },
+        "OP_POW": { "arity": 2, "constraint": "exponent_dimensionless" },
+        "OP_EQ":  { "arity": 2, "commutative": false },
+        "SRO_FL": { "type": "rewrite", "class": "Functional_Lifting" },
+        "SRO_TA": { "type": "rewrite", "class": "Term_Addition" },
+        "SRO_OM": { "type": "rewrite", "class": "Operator_Mutation" },
+        "SRO_DE": { "type": "rewrite", "class": "Dimensional_Extension" }
+      },
+      "invariants": [
+        "DIMENSIONAL_CONSISTENCY",
+        "ISOTROPY_PRESERVATION",
+        "ASYMPTOTIC_RECOVERY"
+      ]
+    },
+    "clp_x_bootstrap": {
+      "event": "CLP_X_GENESIS",
+      "runner_version": "1.0",
+      "payload_hashes": {
+        "registry_hash": "sha256:__COMPUTED_AT_RUNTIME__"
+      }
+    }
   }
 }

@@ -1,132 +1,326 @@
 {
-  "scenario_id": "ELECTRO_GRAVITY_SHOCK_001",
-  "phase": 2,
-  "description": "Multi-Law Stress Test — Simultaneous gravity and Coulomb drift in zone Z_007",
-
-  "shock_injection": {
-    "shock_id": "EG_SHOCK_001",
-    "zone": "Z_007",
-    "anomalies": [
-      {
-        "law": "gravity",
-        "law_id": "L_g_active",
-        "type": "SCALE",
-        "scale": 1.05
-      },
-      {
-        "law": "coulomb",
-        "law_id": "L_e_active",
-        "type": "SCALE",
-        "scale": 0.90
-      }
-    ]
+  "schema_id": "LTCA_FIXTURE_SCHEMA_v1.0",
+  "doc_type": "fixture",
+  "runner": {
+    "runner_id": "LTCA_OFFICIAL_TEST_RUNNER_FULL_SCENARIO_v1_0",
+    "runner_version": "1.0",
+    "ltca_version": "1.7"
   },
-
-  "parallel_reconstruction": {
-    "proposal_sets": [
-      {
-        "id": "PI_L_G_007",
-        "law": "gravity",
-        "pipeline": ["SRO", "REBT_CHECKER", "CAD", "IOSP"],
-        "best_candidate": "G_CAND_3",
-        "rewrite_operator": "SRO_FL",
-        "expression": "F_g = G_eff(Z_007) * (m1*m2) / r^2",
-        "definition": "G_eff(Z_007) = 1.05 * G"
-      },
-      {
-        "id": "PI_L_E_007",
-        "law": "coulomb",
-        "pipeline": ["SRO", "REBT_CHECKER", "CAD", "IOSP"],
-        "best_candidate": "E_CAND_4",
-        "rewrite_operator": "SRO_FL",
-        "expression": "F_e = (1 / (4*pi*epsilon0_eff(Z_007))) * (q1*q2) / r^2",
-        "definition": "epsilon0_eff(Z_007) = epsilon0 / 0.90"
-      }
-    ]
+  "case": {
+    "scenario_id": "ELECTRO_GRAVITY_SHOCK_001",
+    "phase": 2,
+    "description": "Multi-Law Stress Test — Simultaneous gravity and Coulomb drift in zone Z_007"
   },
-
-  "mlr_invocation": {
-    "mlr_case_id": "MLR_EG_001",
-    "zone": "Z_007",
-    "law_set_proposals": ["G_CAND_3", "E_CAND_4"],
-    "strategy": "P1_CONSERVATION_FIRST",
-    "checks": [
-      "dimensional_compatibility_across_set",
-      "global_conservation_constraints",
-      "symmetry_consistency_colocated_fields",
-      "intervention_contradiction_cross_law"
-    ],
-    "round_1_verdict": {
-      "event": "MLR_RESOLVE",
-      "case_id": "MLR_EG_001",
-      "conflicts": [
+  "determinism": {
+    "canonical_json": "RFC8785_subset",
+    "fp_mode": "IEEE754",
+    "numeric_profile": "LTCA_NUMERIC_PROFILE_v1"
+  },
+  "payload": {
+    "shock_injection": {
+      "shock_id": "EG_SHOCK_001",
+      "zone": "Z_007",
+      "anomalies": [
         {
-          "class": "C3_CONSERVATION_BREACH",
-          "law": "E_CAND_4",
-          "detail": "Proposed epsilon0 rescaling violates local energy conservation at Z_007 boundary"
+          "law": "gravity",
+          "law_id": "L_g_active",
+          "type": "SCALE",
+          "deltaS": {
+            "type": "SYSTEMATIC_SCALE",
+            "params": { "affected_constant": "G", "zone": "Z_007" }
+          },
+          "measurement_model": {
+            "type": "SCALE_RELATIVE_TO_BASELINE",
+            "baseline": "F_g_calc_standard",
+            "scale": { "lit": "1.05" }
+          }
+        },
+        {
+          "law": "coulomb",
+          "law_id": "L_e_active",
+          "type": "SCALE",
+          "deltaS": {
+            "type": "SYSTEMATIC_SCALE",
+            "params": { "affected_constant": "epsilon0", "zone": "Z_007" }
+          },
+          "measurement_model": {
+            "type": "SCALE_RELATIVE_TO_BASELINE",
+            "baseline": "F_e_calc_standard",
+            "scale": { "lit": "0.90" }
+          }
         }
+      ]
+    },
+
+    "parallel_reconstruction": {
+      "proposal_sets": [
+        {
+          "id": "PI_L_G_007",
+          "law": "gravity",
+          "pipeline": ["SRO", "REBT_CHECKER", "CAD", "IOSP"],
+          "best_candidate": "G_CAND_3",
+          "rewrite_operator": "SRO_FL",
+          "law_new": {
+            "expression": "F_g = G_eff(Z_007) * (m1*m2) / r^2",
+            "ast": {
+              "op": "OP_EQ",
+              "args": [
+                { "sym": "F_g" },
+                {
+                  "op": "OP_MUL",
+                  "args": [
+                    {
+                      "op": "APPLY",
+                      "args": [
+                        { "sym": "G_eff" },
+                        { "zone": "Z_007" }
+                      ],
+                      "meta": { "dim": [-1, 3, -2, 0, 0, 0, 0], "symmetry": "Liftable_Constant" }
+                    },
+                    {
+                      "op": "OP_DIV",
+                      "args": [
+                        {
+                          "op": "OP_MUL",
+                          "args": [ { "sym": "m1" }, { "sym": "m2" } ],
+                          "meta": { "dim": [2, 0, 0, 0, 0, 0, 0], "symmetry": "Scalar" }
+                        },
+                        {
+                          "op": "OP_POW",
+                          "args": [ { "sym": "r" }, { "lit": "2" } ],
+                          "meta": { "dim": [0, 2, 0, 0, 0, 0, 0], "symmetry": "Scalar" }
+                        }
+                      ],
+                      "meta": { "dim": [2, -2, 0, 0, 0, 0, 0], "symmetry": "Scalar" }
+                    }
+                  ],
+                  "meta": { "dim": [1, 1, -2, 0, 0, 0, 0], "symmetry": "Scalar" }
+                }
+              ],
+              "meta": { "dim": [1, 1, -2, 0, 0, 0, 0], "symmetry": "Scalar" }
+            },
+            "definition": {
+              "op": "DEF",
+              "args": [
+                {
+                  "op": "APPLY",
+                  "args": [ { "sym": "G_eff" }, { "zone": "Z_007" } ],
+                  "meta": { "dim": [-1, 3, -2, 0, 0, 0, 0] }
+                },
+                {
+                  "op": "OP_MUL",
+                  "args": [ { "lit": "1.05" }, { "sym": "G" } ],
+                  "meta": { "dim": [-1, 3, -2, 0, 0, 0, 0] }
+                }
+              ],
+              "meta": { "dim": [-1, 3, -2, 0, 0, 0, 0] }
+            }
+          },
+          "derivation": {
+            "rule_id": "SRO_FL_ZONE_LIFT_v1",
+            "inputs": { "target_constant": "G", "zone": "Z_007", "lift_type": "SCALE_BY_ZONE" },
+            "justification": "Zone-dependent lift of G preserving dimension and isotropy"
+          }
+        },
+        {
+          "id": "PI_L_E_007",
+          "law": "coulomb",
+          "pipeline": ["SRO", "REBT_CHECKER", "CAD", "IOSP"],
+          "best_candidate": "E_CAND_4",
+          "rewrite_operator": "SRO_FL",
+          "law_new": {
+            "expression": "F_e = (1 / (4*pi*epsilon0_eff(Z_007))) * (q1*q2) / r^2",
+            "ast": {
+              "op": "OP_EQ",
+              "args": [
+                { "sym": "F_e" },
+                {
+                  "op": "OP_MUL",
+                  "args": [
+                    {
+                      "op": "OP_DIV",
+                      "args": [
+                        { "lit": "1" },
+                        {
+                          "op": "OP_MUL",
+                          "args": [
+                            { "lit": "4" },
+                            { "sym": "pi" },
+                            {
+                              "op": "APPLY",
+                              "args": [
+                                { "sym": "epsilon0_eff" },
+                                { "zone": "Z_007" }
+                              ],
+                              "meta": { "dim": [-1, -3, 4, 2, 0, 0, 0], "symmetry": "Liftable_Constant" }
+                            }
+                          ],
+                          "meta": { "dim": [-1, -3, 4, 2, 0, 0, 0], "symmetry": "Scalar" }
+                        }
+                      ],
+                      "meta": { "dim": [1, 3, -4, -2, 0, 0, 0], "symmetry": "Scalar" }
+                    },
+                    {
+                      "op": "OP_DIV",
+                      "args": [
+                        {
+                          "op": "OP_MUL",
+                          "args": [ { "sym": "q1" }, { "sym": "q2" } ],
+                          "meta": { "dim": [0, 0, 2, 2, 0, 0, 0], "symmetry": "Scalar" }
+                        },
+                        {
+                          "op": "OP_POW",
+                          "args": [ { "sym": "r" }, { "lit": "2" } ],
+                          "meta": { "dim": [0, 2, 0, 0, 0, 0, 0], "symmetry": "Scalar" }
+                        }
+                      ],
+                      "meta": { "dim": [0, -2, 2, 2, 0, 0, 0], "symmetry": "Scalar" }
+                    }
+                  ],
+                  "meta": { "dim": [1, 1, -2, 0, 0, 0, 0], "symmetry": "Scalar" }
+                }
+              ],
+              "meta": { "dim": [1, 1, -2, 0, 0, 0, 0], "symmetry": "Scalar" }
+            },
+            "definition": {
+              "op": "DEF",
+              "args": [
+                {
+                  "op": "APPLY",
+                  "args": [ { "sym": "epsilon0_eff" }, { "zone": "Z_007" } ],
+                  "meta": { "dim": [-1, -3, 4, 2, 0, 0, 0] }
+                },
+                {
+                  "op": "OP_DIV",
+                  "args": [ { "sym": "epsilon0" }, { "lit": "0.90" } ],
+                  "meta": { "dim": [-1, -3, 4, 2, 0, 0, 0] }
+                }
+              ],
+              "meta": { "dim": [-1, -3, 4, 2, 0, 0, 0] }
+            }
+          },
+          "derivation": {
+            "rule_id": "SRO_FL_ZONE_LIFT_v1",
+            "inputs": { "target_constant": "epsilon0", "zone": "Z_007", "lift_type": "INVERSE_SCALE_BY_ZONE" },
+            "justification": "Zone-dependent lift of epsilon0 (inverse scale) preserving dimension"
+          }
+        }
+      ]
+    },
+
+    "mlr_invocation": {
+      "mlr_case_id": "MLR_EG_001",
+      "zone": "Z_007",
+      "law_set_proposals": ["G_CAND_3", "E_CAND_4"],
+      "strategy": "P1_CONSERVATION_FIRST",
+      "checks": [
+        "dimensional_compatibility_across_set",
+        "global_conservation_constraints",
+        "symmetry_consistency_colocated_fields",
+        "intervention_contradiction_cross_law"
       ],
-      "resolution": {
-        "action": "REJECT",
-        "rejected": ["E_CAND_4"],
-        "required": "RECONSTRUCT_E_WITH_CONSERVATION"
+      "round_1_verdict": {
+        "event": "MLR_RESOLVE",
+        "case_id": "MLR_EG_001",
+        "zone": "Z_007",
+        "strategy": "P1_CONSERVATION_FIRST",
+        "law_set_proposals": ["G_CAND_3", "E_CAND_4"],
+        "conflicts": [
+          {
+            "class": "C3_CONSERVATION_BREACH",
+            "law": "E_CAND_4",
+            "detail": "Proposed epsilon0 rescaling violates local energy conservation at Z_007 boundary",
+            "witness": {
+              "type": "CLOSED_LOOP_WORK_NONZERO",
+              "quantity": "W_loop",
+              "sign": "!=0",
+              "boundary": "Z_007",
+              "evidence_ref": "W_MLR_CONSERVATION_EG_001"
+            }
+          }
+        ],
+        "resolution": {
+          "action": "REJECT",
+          "rejected": ["E_CAND_4"],
+          "required": "RECONSTRUCT_E_WITH_CONSERVATION"
+        },
+        "lssm": { "lit": "0.78" }
+      }
+    },
+
+    "hsc_reaction": {
+      "event": "HSC_WINDOW_DECISION",
+      "mode": "MODE-2",
+      "lssm": { "lit": "0.78" },
+      "budgets": {
+        "B_RP": { "lit": "0.30" },
+        "B_EP": { "lit": "0.30" },
+        "B_INT": { "lit": "0.80" }
       },
-      "lssm": 0.78
-    }
-  },
-
-  "hsc_reaction": {
-    "event": "HSC_WINDOW_DECISION",
-    "mode": "MODE-2",
-    "lssm": 0.78,
-    "budgets": {
-      "B_RP": 0.30,
-      "B_EP": 0.30,
-      "B_INT": 0.80
+      "caps": {
+        "max_candidates": 24,
+        "max_depth": 4,
+        "max_iterations": 4
+      },
+      "freeze_policy": {
+        "condition": "CG == LAW_UNCERTAIN AND LSSM < threshold",
+        "action": "FREEZE_EP_OPERATIONS"
+      }
     },
-    "caps": {
-      "max_candidates": 24,
-      "max_depth": 4
-    }
-  },
 
-  "mandatory_loopback": {
-    "trigger": "MLR_REJECTION",
-    "target_law": "coulomb",
-    "constraints": [
-      "CONSERVATION_FIRST",
-      "ISOTROPY_PRESERVATION"
-    ],
-    "allowed_operators": ["SRO_FL", "SRO_TA_DIMENSIONED_ONLY"],
-    "forbidden": ["SRO_OM_ISOTROPY_BREAKING"],
-    "termination_conditions": {
-      "success": "MLR returns ACCEPT_SET",
-      "failure": "budgets exhausted → REFUSE + HALT"
-    }
-  },
-
-  "finalization": {
-    "mlr_accept": {
-      "event": "MLR_RESOLVE",
-      "resolution": { "action": "ACCEPT_SET" },
-      "lssm": 0.92
+    "mandatory_loopback": {
+      "trigger": "MLR_REJECTION",
+      "target_law": "coulomb",
+      "constraints": [
+        "CONSERVATION_FIRST",
+        "ISOTROPY_PRESERVATION"
+      ],
+      "allowed_operators": ["SRO_FL", "SRO_TA_DIMENSIONED_ONLY"],
+      "forbidden": ["SRO_OM_ISOTROPY_BREAKING"],
+      "loopback_contract": {
+        "deterministic_iteration": true,
+        "max_iterations": 4,
+        "termination_conditions": {
+          "success": "MLR returns ACCEPT_SET",
+          "failure": "budgets exhausted -> REFUSE + HALT"
+        },
+        "iteration_trace_required": true,
+        "trace_ref": "W_LOOPBACK_EG_001"
+      }
     },
-    "cg_promote": {
-      "event": "CG_EVALUATE",
-      "decision": "PROMOTE_LAW_SET",
-      "atomic": true
-    },
-    "clp_x_seal": {
-      "event": "CLP_X_COMMIT",
-      "commit_tag": "MULTI_LAW_EG_SHOCK_001",
-      "lssm": 0.92,
-      "status": "SUCCESS"
-    }
-  },
 
-  "pass_criteria": [
-    "No law promoted if set-level invariants fail",
-    "Set-level commit is atomic (no partial promotion)",
-    "Deterministic rerun yields identical commit hashes"
-  ]
+    "finalization": {
+      "mlr_accept": {
+        "event": "MLR_RESOLVE",
+        "case_id": "MLR_EG_001",
+        "resolution": { "action": "ACCEPT_SET" },
+        "lssm": { "lit": "0.92" }
+      },
+      "cg_promote": {
+        "event": "CG_EVALUATE",
+        "decision": "PROMOTE_LAW_SET",
+        "atomic": true,
+        "inputs": ["REB-T:PASS", "CAD:PASS", "MLR:ACCEPT_SET"],
+        "promoted": ["G_CAND_3", "E_CAND_CORRECTED"]
+      },
+      "clp_x_seal": {
+        "event": "CLP_X_COMMIT",
+        "commit_tag": "MULTI_LAW_EG_SHOCK_001",
+        "status": "SUCCESS",
+        "payload_hashes": {
+          "registry_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+          "gravity_proposal_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+          "coulomb_proposal_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+          "mlr_log_hash": "sha256:__COMPUTED_AT_RUNTIME__",
+          "cg_decision_hash": "sha256:__COMPUTED_AT_RUNTIME__"
+        }
+      }
+    },
+
+    "pass_criteria": [
+      "No law promoted if set-level invariants fail",
+      "Set-level commit is atomic (no partial promotion)",
+      "Deterministic rerun yields identical commit hashes"
+    ]
+  }
 }
