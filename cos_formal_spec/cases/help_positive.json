@@ -1,0 +1,70 @@
+{
+  "case_id": "help_positive_001",
+  "description": "Basic help request with positive outcome",
+  "ase_events": [
+    {
+      "event_id": "E_001",
+      "schema_id": "HELP_REQUEST",
+      "participants": {
+        "agent": "user",
+        "patient": "task_A"
+      },
+      "dynamics": {
+        "world_delta": {
+          "task_A": {
+            "status": "NEEDS_HELP"
+          }
+        },
+        "agent_delta": {}
+      },
+      "scope": {
+        "branch": "TEXT",
+        "evidence_level": "L_text"
+      }
+    },
+    {
+      "event_id": "E_002",
+      "schema_id": "HELP_PROVIDED",
+      "participants": {
+        "agent": "system",
+        "patient": "task_A"
+      },
+      "dynamics": {
+        "world_delta": {
+          "task_A": {
+            "status": "HELPED"
+          }
+        },
+        "agent_delta": {
+          "last_action": "provide_help"
+        }
+      },
+      "scope": {
+        "branch": "TEXT",
+        "evidence_level": "L_text"
+      }
+    },
+    {
+      "event_id": "E_003",
+      "schema_id": "FEEDBACK_EVENT",
+      "participants": {
+        "agent": "system",
+        "source": "user"
+      },
+      "dynamics": {
+        "world_delta": {
+          "task_A": {
+            "status": "COMPLETED"
+          }
+        },
+        "agent_delta": {
+          "goal_progress": 1.0
+        }
+      },
+      "scope": {
+        "branch": "TEXT",
+        "evidence_level": "L_text"
+      }
+    }
+  ]
+}

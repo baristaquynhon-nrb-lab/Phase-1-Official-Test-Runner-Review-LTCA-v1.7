@@ -1,0 +1,22 @@
+{
+  "world_state": {},
+  "agent_state": {
+    "active_goals": [],
+    "resource_level": 1.0,
+    "last_action": null,
+    "awaiting_input": false
+  },
+  "memory_state": {
+    "events": [],
+    "index": 0
+  },
+  "meta_state": {
+    "ksi": 1.0,
+    "conflict_density": 0.0,
+    "drift_level": 0.0,
+    "cognitive_stress": 0.0,
+    "alert_flags": [],
+    "regulation": "NONE"
+  },
+  "state_hash": "GENESIS"
+}

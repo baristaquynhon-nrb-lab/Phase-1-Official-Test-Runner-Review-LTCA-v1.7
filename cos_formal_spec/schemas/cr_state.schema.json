@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CR_State",
+  "description": "Cognitive Runtime State",
+  "type": "object",
+  "required": ["world_state", "agent_state", "memory_state", "meta_state", "state_hash"],
+  "properties": {
+    "world_state": {
+      "type": "object",
+      "description": "Representational world state (TEXT branch)"
+    },
+    "agent_state": {
+      "type": "object",
+      "required": ["active_goals", "resource_level"],
+      "properties": {
+        "active_goals": { "type": "array", "items": { "type": "string" } },
+        "resource_level": { "type": "number", "minimum": 0, "maximum": 1 },
+        "last_action": { "type": "string" },
+        "awaiting_input": { "type": "boolean" }
+      }
+    },
+    "memory_state": {
+      "type": "object",
+      "required": ["events", "index"],
+      "properties": {
+        "events": { "type": "array" },
+        "index": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "meta_state": {
+      "type": "object",
+      "required": ["ksi", "conflict_density", "drift_level", "cognitive_stress"],
+      "properties": {
+        "ksi": { "type": "number", "minimum": 0, "maximum": 1 },
+        "conflict_density": { "type": "number", "minimum": 0, "maximum": 1 },
+        "drift_level": { "type": "number", "minimum": 0, "maximum": 1 },
+        "cognitive_stress": { "type": "number", "minimum": 0, "maximum": 1 },
+        "alert_flags": { "type": "array", "items": { "type": "string" } },
+        "regulation": { "enum": ["NONE", "REQUEST_EVIDENCE", "THROTTLE", "HALT"] }
+      }
+    },
+    "state_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

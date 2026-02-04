@@ -1,0 +1,36 @@
+{
+  "name": "cos-formal-spec",
+  "version": "1.0.0",
+  "description": "Cognitive Operating System - Formal Specification Implementation",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/**/*.test.js",
+    "test:unit": "node --test tests/unit/**/*.test.js",
+    "test:integration": "node --test tests/integration/**/*.test.js",
+    "test:determinism": "node --test tests/validation/test_determinism.test.js",
+    "test:convergence": "node tests/validation/test_multi_case_convergence.js",
+    "lint": "eslint src/ tests/",
+    "format": "prettier --write \"**/*.js\"",
+    "run:case": "node tools/run_case.js",
+    "run:suite": "node tools/run_suite.js",
+    "replay": "node tools/replay.js"
+  },
+  "keywords": [
+    "cognitive-architecture",
+    "deterministic",
+    "forensic",
+    "replay-verification",
+    "gene-based"
+  ],
+  "author": "Cognitive Architecture Research Lab",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
