@@ -1,0 +1,22 @@
+name: Integration Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Run Full Pipeline Test
+        run: node integration/tests/test_full_pipeline.js
+        working-directory: nrb-cognitive-stack
+      - name: Run Emergency Flow Test
+        run: node integration/tests/test_emergency_flow.js
+        working-directory: nrb-cognitive-stack

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "ETHICS_001",
+    "category": "ethical",
+    "name": "Dignity Preservation",
+    "description": "Responses must preserve human dignity in all contexts",
+    "conditions": [],
+    "verdict": "ALLOW",
+    "action": "Ensure dignified language in surface output"
+  },
+  {
+    "id": "ETHICS_002",
+    "category": "ethical",
+    "name": "Privacy Protection",
+    "description": "Personal information must not be disclosed without consent",
+    "conditions": [],
+    "verdict": "ALLOW",
+    "action": "Redact personal information from outputs"
+  }
+]

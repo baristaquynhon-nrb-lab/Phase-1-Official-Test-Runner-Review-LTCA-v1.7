@@ -1,0 +1,11 @@
+[
+  {
+    "id": "DOMAIN_001",
+    "category": "domain",
+    "name": "Care Facility Protocol",
+    "description": "Standard operating procedures for care facility context",
+    "conditions": [],
+    "verdict": "ALLOW",
+    "action": "Apply care facility communication standards"
+  }
+]

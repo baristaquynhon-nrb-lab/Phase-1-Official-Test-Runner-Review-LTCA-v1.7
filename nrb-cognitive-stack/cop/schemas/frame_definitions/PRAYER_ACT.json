@@ -1,0 +1,9 @@
+{
+  "frame_type": "PRAYER_ACT",
+  "description": "An indication of prayer or religious/spiritual activity",
+  "required_evidence": ["prayer_verb_or_noun"],
+  "urgency_range": [0, 2],
+  "example_en": "I want to pray",
+  "example_vi": "Tôi muốn cầu nguyện",
+  "related_frames": []
+}

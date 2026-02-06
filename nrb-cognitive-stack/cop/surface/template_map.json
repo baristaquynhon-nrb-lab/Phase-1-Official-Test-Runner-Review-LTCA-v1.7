@@ -1,0 +1,44 @@
+{
+  "HELP_REQUEST": {
+    "en": {
+      "default": "The person is requesting help.",
+      "urgent": "URGENT: The person needs immediate assistance."
+    },
+    "vi": {
+      "default": "Người này đang yêu cầu giúp đỡ.",
+      "urgent": "KHẨN CẤP: Người này cần được hỗ trợ ngay lập tức."
+    }
+  },
+  "TOILET_VISIT": {
+    "en": {
+      "default": "The person needs to use the restroom."
+    },
+    "vi": {
+      "default": "Người này cần đi nhà vệ sinh."
+    }
+  },
+  "PRAYER_ACT": {
+    "en": {
+      "default": "The person wishes to pray."
+    },
+    "vi": {
+      "default": "Người này muốn cầu nguyện."
+    }
+  },
+  "EMERGENCY_DISTRESS": {
+    "en": {
+      "default": "EMERGENCY: The person is in distress and requires immediate intervention."
+    },
+    "vi": {
+      "default": "KHẨN CẤP: Người này đang trong tình trạng nguy hiểm và cần can thiệp ngay."
+    }
+  },
+  "UNKNOWN_INTENT": {
+    "en": {
+      "default": "The intent could not be determined from the input."
+    },
+    "vi": {
+      "default": "Không thể xác định ý định từ đầu vào."
+    }
+  }
+}

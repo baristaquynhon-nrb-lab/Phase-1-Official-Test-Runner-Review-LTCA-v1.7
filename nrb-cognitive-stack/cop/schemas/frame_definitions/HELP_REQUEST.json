@@ -1,0 +1,9 @@
+{
+  "frame_type": "HELP_REQUEST",
+  "description": "A request for assistance or help from a caregiver or system",
+  "required_evidence": ["assistance_verb", "agent_or_patient"],
+  "urgency_range": [1, 5],
+  "example_en": "Please help me",
+  "example_vi": "Xin giúp tôi",
+  "related_frames": ["EMERGENCY_DISTRESS"]
+}

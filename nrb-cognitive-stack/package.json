@@ -1,0 +1,25 @@
+{
+  "name": "nrb-cognitive-stack",
+  "version": "1.0.0",
+  "description": "NRB Cognitive Stack — COP, GSRA, PFT, GeneDB architecture",
+  "main": "cop/cil_runtime/cil_runtime_engine.js",
+  "scripts": {
+    "test:cop": "node cop/tests/run_cop_tests.js",
+    "test:gsra": "node gsra/tests/test_law_evaluation.js",
+    "test:integration": "node integration/tests/test_full_pipeline.js",
+    "test:all": "npm run test:cop && npm run test:gsra && npm run test:integration",
+    "validate:schemas": "node common/validation/schema_validator.js --all",
+    "audit": "node common/logging/audit_trail.js --export",
+    "benchmark:cop": "node benchmarks/cop_latency_test.js",
+    "benchmark:gsra": "node benchmarks/gsra_throughput_test.js"
+  },
+  "keywords": [
+    "cognitive-architecture",
+    "nlp",
+    "bilingual",
+    "deterministic",
+    "safety"
+  ],
+  "author": "NRB Lab",
+  "license": "MIT"
+}

@@ -1,0 +1,24 @@
+[
+  {
+    "id": "INTERVENE_001",
+    "category": "intervention",
+    "name": "Mandatory Help Response",
+    "description": "Help requests must always receive a response",
+    "conditions": [
+      { "field": "intent", "operator": "in", "value": ["HELP_REQUEST", "EMERGENCY_DISTRESS"] }
+    ],
+    "verdict": "ALLOW",
+    "action": "Ensure help response is generated"
+  },
+  {
+    "id": "INTERVENE_002",
+    "category": "intervention",
+    "name": "Caregiver Notification",
+    "description": "High-urgency events require caregiver notification",
+    "conditions": [
+      { "field": "urgency", "operator": "gte", "value": 4 }
+    ],
+    "verdict": "MODIFY",
+    "action": "Add caregiver notification to action plan"
+  }
+]

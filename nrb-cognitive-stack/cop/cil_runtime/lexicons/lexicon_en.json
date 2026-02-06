@@ -1,0 +1,27 @@
+{
+  "help": [
+    { "sense": "REQUEST_ASSISTANCE", "pos": "VERB", "confidence": 0.9 },
+    { "sense": "AID", "pos": "NOUN", "confidence": 0.6 }
+  ],
+  "emergency": [
+    { "sense": "URGENT_SITUATION", "pos": "NOUN", "confidence": 0.95 }
+  ],
+  "please": [
+    { "sense": "POLITENESS_MARKER", "pos": "ADVERB", "confidence": 0.85 }
+  ],
+  "need": [
+    { "sense": "REQUIRE", "pos": "VERB", "confidence": 0.8 }
+  ],
+  "toilet": [
+    { "sense": "RESTROOM", "pos": "NOUN", "confidence": 0.9 }
+  ],
+  "pray": [
+    { "sense": "PRAYER_ACT", "pos": "VERB", "confidence": 0.9 }
+  ],
+  "hurt": [
+    { "sense": "PAIN", "pos": "VERB", "confidence": 0.85 }
+  ],
+  "danger": [
+    { "sense": "THREAT", "pos": "NOUN", "confidence": 0.9 }
+  ]
+}

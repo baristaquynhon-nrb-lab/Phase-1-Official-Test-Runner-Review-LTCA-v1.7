@@ -1,0 +1,25 @@
+[
+  {
+    "id": "SAFETY_001",
+    "category": "safety",
+    "name": "Emergency Distress Response",
+    "description": "When emergency distress is detected, require immediate human intervention",
+    "conditions": [
+      { "field": "intent", "operator": "eq", "value": "EMERGENCY_DISTRESS" },
+      { "field": "urgency", "operator": "gte", "value": 4 }
+    ],
+    "verdict": "MODIFY",
+    "action": "Escalate to human caregiver immediately"
+  },
+  {
+    "id": "SAFETY_002",
+    "category": "safety",
+    "name": "High Urgency Alert",
+    "description": "Any high-urgency frame triggers safety review",
+    "conditions": [
+      { "field": "urgency", "operator": "gte", "value": 5 }
+    ],
+    "verdict": "MODIFY",
+    "action": "Trigger safety review protocol"
+  }
+]

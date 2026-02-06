@@ -1,0 +1,23 @@
+{
+  "giúp": [
+    { "sense": "REQUEST_ASSISTANCE", "pos": "VERB", "confidence": 0.9 }
+  ],
+  "cứu": [
+    { "sense": "RESCUE", "pos": "VERB", "confidence": 0.95 }
+  ],
+  "khẩn": [
+    { "sense": "URGENT", "pos": "ADJECTIVE", "confidence": 0.9 }
+  ],
+  "đau": [
+    { "sense": "PAIN", "pos": "VERB", "confidence": 0.85 }
+  ],
+  "nhà vệ sinh": [
+    { "sense": "RESTROOM", "pos": "NOUN", "confidence": 0.9 }
+  ],
+  "cầu nguyện": [
+    { "sense": "PRAYER_ACT", "pos": "VERB", "confidence": 0.9 }
+  ],
+  "nguy hiểm": [
+    { "sense": "THREAT", "pos": "NOUN", "confidence": 0.9 }
+  ]
+}

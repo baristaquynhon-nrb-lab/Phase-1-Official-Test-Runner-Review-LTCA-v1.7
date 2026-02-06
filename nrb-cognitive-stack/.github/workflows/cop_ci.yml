@@ -1,0 +1,47 @@
+name: COP CI/CD
+
+on:
+  push:
+    paths:
+      - 'cop/**'
+  pull_request:
+    paths:
+      - 'cop/**'
+
+jobs:
+  test-cop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Run COP Tests
+        run: node cop/tests/run_cop_tests.js
+        working-directory: nrb-cognitive-stack
+      - name: Validate Schemas
+        run: node common/validation/schema_validator.js --all
+        working-directory: nrb-cognitive-stack
+
+  determinism-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: COP Determinism Verification
+        run: |
+          echo "Running determinism checks..."
+          node -e "
+            const { runPipeline } = require('./cop/cil_runtime/cil_runtime_engine');
+            const lexicon = require('./cop/cil_runtime/lexicons/lexicon_en.json');
+            const r1 = runPipeline('help me', { lexicon });
+            const r2 = runPipeline('help me', { lexicon });
+            if (r1.trace_hash !== r2.trace_hash) {
+              console.error('DETERMINISM FAILED');
+              process.exit(1);
+            }
+            console.log('DETERMINISM VERIFIED');
+          "
+        working-directory: nrb-cognitive-stack

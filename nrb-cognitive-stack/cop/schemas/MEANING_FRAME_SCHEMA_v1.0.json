@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Meaning Frame Schema v1.0",
+  "description": "Canonical schema for COP Meaning Frames",
+  "type": "object",
+  "required": ["type", "version", "intent", "confidence", "urgency", "language", "evidence", "trace_hash"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "const": "meaning_frame"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "intent": {
+      "type": "string",
+      "enum": [
+        "HELP_REQUEST",
+        "TOILET_VISIT",
+        "PRAYER_ACT",
+        "EMERGENCY_DISTRESS",
+        "UNCLASSIFIED",
+        "UNKNOWN_INTENT"
+      ]
+    },
+    "tokens": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "token": { "type": "string" },
+          "selected": { "type": "object" }
+        }
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "urgency": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5
+    },
+    "language": {
+      "type": "string",
+      "enum": ["en", "vi"]
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["source_text", "hypothesis_id"],
+      "properties": {
+        "source_text": { "type": "string" },
+        "hypothesis_id": { "type": "string" },
+        "constraints_applied": { "type": "boolean" }
+      }
+    },
+    "trace_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

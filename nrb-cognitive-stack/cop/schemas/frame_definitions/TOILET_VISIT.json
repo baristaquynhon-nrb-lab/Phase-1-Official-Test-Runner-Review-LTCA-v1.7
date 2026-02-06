@@ -1,0 +1,9 @@
+{
+  "frame_type": "TOILET_VISIT",
+  "description": "A request or indication of needing to use the restroom",
+  "required_evidence": ["restroom_noun_or_euphemism"],
+  "urgency_range": [2, 4],
+  "example_en": "I need to go to the toilet",
+  "example_vi": "Tôi cần đi nhà vệ sinh",
+  "related_frames": ["HELP_REQUEST"]
+}

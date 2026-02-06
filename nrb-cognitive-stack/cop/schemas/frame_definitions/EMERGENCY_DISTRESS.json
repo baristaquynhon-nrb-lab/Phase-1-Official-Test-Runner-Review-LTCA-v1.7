@@ -1,0 +1,9 @@
+{
+  "frame_type": "EMERGENCY_DISTRESS",
+  "description": "An emergency or life-threatening distress signal",
+  "required_evidence": ["distress_signal", "urgency_marker"],
+  "urgency_range": [4, 5],
+  "example_en": "Help! I'm hurt and in danger!",
+  "example_vi": "Cứu! Tôi bị đau và nguy hiểm!",
+  "related_frames": ["HELP_REQUEST"]
+}

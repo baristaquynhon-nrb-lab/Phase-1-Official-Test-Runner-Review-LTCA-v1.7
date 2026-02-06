@@ -1,0 +1,47 @@
+name: Full Stack Validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  full-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: COP Tests
+        run: node cop/tests/run_cop_tests.js
+        working-directory: nrb-cognitive-stack
+
+      - name: GSRA Tests
+        run: |
+          node gsra/tests/test_law_evaluation.js
+          node gsra/tests/test_evidence_binding.js
+          node gsra/tests/test_gsra_refusal.js
+        working-directory: nrb-cognitive-stack
+
+      - name: PFT Tests
+        run: node pft/tests/test_signal_to_cop.js
+        working-directory: nrb-cognitive-stack
+
+      - name: GeneDB Tests
+        run: |
+          node genedb/tests/test_gene_encoding.js
+          node genedb/tests/test_memory_retrieval.js
+        working-directory: nrb-cognitive-stack
+
+      - name: Integration Tests
+        run: |
+          node integration/tests/test_full_pipeline.js
+          node integration/tests/test_emergency_flow.js
+        working-directory: nrb-cognitive-stack
+
+      - name: Schema Validation
+        run: node common/validation/schema_validator.js --all
+        working-directory: nrb-cognitive-stack

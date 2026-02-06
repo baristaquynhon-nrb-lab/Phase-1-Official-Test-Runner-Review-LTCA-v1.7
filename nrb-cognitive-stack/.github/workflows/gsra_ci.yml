@@ -1,0 +1,40 @@
+name: GSRA CI/CD
+
+on:
+  push:
+    paths:
+      - 'gsra/**'
+  pull_request:
+    paths:
+      - 'gsra/**'
+
+jobs:
+  test-gsra:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Run GSRA Tests
+        run: |
+          node gsra/tests/test_law_evaluation.js
+          node gsra/tests/test_evidence_binding.js
+          node gsra/tests/test_gsra_refusal.js
+        working-directory: nrb-cognitive-stack
+      - name: Validate Law Vault
+        run: |
+          node -e "
+            const { validateLawVault } = require('./gsra/law_vault/law_validator');
+            const safety = require('./gsra/law_vault/safety_laws.json');
+            const ethical = require('./gsra/law_vault/ethical_laws.json');
+            const intervention = require('./gsra/law_vault/intervention_laws.json');
+            const allLaws = [...safety, ...ethical, ...intervention];
+            const result = validateLawVault(allLaws);
+            if (!result.valid) {
+              console.error('LAW VAULT VALIDATION FAILED', result);
+              process.exit(1);
+            }
+            console.log('LAW VAULT VALID');
+          "
+        working-directory: nrb-cognitive-stack

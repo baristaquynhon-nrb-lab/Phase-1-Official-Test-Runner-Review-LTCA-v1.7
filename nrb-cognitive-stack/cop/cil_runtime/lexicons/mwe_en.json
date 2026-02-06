@@ -1,0 +1,5 @@
+{
+  "help": ["help me", "help us", "need help"],
+  "call": ["call for help", "call 911"],
+  "get": ["get out", "get help", "get away"]
+}

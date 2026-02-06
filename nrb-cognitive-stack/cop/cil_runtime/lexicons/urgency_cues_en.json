@@ -1,0 +1,10 @@
+[
+  { "pattern": "help", "level": 3, "category": "assistance_request" },
+  { "pattern": "emergency", "level": 5, "category": "crisis" },
+  { "pattern": "danger", "level": 5, "category": "threat" },
+  { "pattern": "hurt", "level": 4, "category": "injury" },
+  { "pattern": "please", "level": 2, "category": "politeness_urgency" },
+  { "pattern": "now", "level": 3, "category": "temporal_urgency" },
+  { "pattern": "immediately", "level": 4, "category": "temporal_urgency" },
+  { "pattern": "dying", "level": 5, "category": "life_threat" }
+]

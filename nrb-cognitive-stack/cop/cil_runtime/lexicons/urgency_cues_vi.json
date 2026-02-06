@@ -1,0 +1,9 @@
+[
+  { "pattern": "giúp", "level": 3, "category": "assistance_request" },
+  { "pattern": "cứu", "level": 5, "category": "crisis" },
+  { "pattern": "nguy hiểm", "level": 5, "category": "threat" },
+  { "pattern": "đau", "level": 4, "category": "injury" },
+  { "pattern": "khẩn", "level": 4, "category": "urgency" },
+  { "pattern": "ngay", "level": 3, "category": "temporal_urgency" },
+  { "pattern": "chết", "level": 5, "category": "life_threat" }
+]

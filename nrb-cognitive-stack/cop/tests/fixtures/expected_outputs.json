@@ -1,0 +1,22 @@
+{
+  "help_request_en": {
+    "intent": "HELP_REQUEST",
+    "language": "en",
+    "urgency_min": 2
+  },
+  "help_request_vi": {
+    "intent": "HELP_REQUEST",
+    "language": "vi",
+    "urgency_min": 2
+  },
+  "emergency_en": {
+    "intent": "EMERGENCY_DISTRESS",
+    "language": "en",
+    "urgency_min": 4
+  },
+  "unknown_en": {
+    "intent": "UNKNOWN_INTENT",
+    "language": "en",
+    "urgency_min": 0
+  }
+}
