@@ -14,7 +14,7 @@
  */
 
 const { canonicalHash } = require('../core/canonical_hash');
-const { deterministicTime, resetClock } = require('../core/deterministic_clock');
+const { deterministicTime, resetClock, currentTime } = require('../core/deterministic_clock');
 const { auditLog, resetAuditLogger, verifyAuditChain, getAuditTrail } = require('../core/audit_logger');
 
 // Layer imports
@@ -44,7 +44,7 @@ class PipelineResult {
     this.errors = [];
   }
 
-  addStage(name, artifact, duration) {
+  addStage(name, artifact, logicalDuration) {
     this.stages.push({
       stage: name,
       artifact_type: artifact?.type || 'UNKNOWN',
@@ -52,7 +52,7 @@ class PipelineResult {
                    artifact?.cb_id || artifact?.gene_id || artifact?.ase_id || null,
       artifact_hash: artifact?.hash || artifact?.trace_hash || artifact?.evid_hash ||
                      artifact?.cb_hash || artifact?.gene_hash || artifact?.ase_hash || null,
-      duration_ms: duration,
+      logical_duration: logicalDuration, // LAW-005: Deterministic duration (Lamport ticks)
       timestamp: deterministicTime()
     });
   }
@@ -101,18 +101,18 @@ function executePipeline(input, options = {}) {
   } = options;
 
   const result = new PipelineResult();
-  const startTime = process.hrtime.bigint();
+  const startLogical = currentTime(); // LAW-005: Logical time only
 
   try {
     // ═══════════════════════════════════════════════════════════
     // STAGE 1: SIGNAL CAPTURE (Layer I)
     // ═══════════════════════════════════════════════════════════
-    let stageStart = process.hrtime.bigint();
+    let stageStartLogical = currentTime();
     const signal = captureSignal(input, {
       source: signalSource,
       type: signalType
     });
-    result.addStage('LAYER_I_SIGNAL', signal, Number(process.hrtime.bigint() - stageStart) / 1e6);
+    result.addStage('LAYER_I_SIGNAL', signal, currentTime() - stageStartLogical);
     result.artifacts.signal = signal;
 
     // Validate
@@ -124,9 +124,9 @@ function executePipeline(input, options = {}) {
     // ═══════════════════════════════════════════════════════════
     // STAGE 2: TRACE EXTRACTION (Layer II)
     // ═══════════════════════════════════════════════════════════
-    stageStart = process.hrtime.bigint();
+    stageStartLogical = currentTime();
     const trace = extractTrace(signal);
-    result.addStage('LAYER_II_TRACE', trace, Number(process.hrtime.bigint() - stageStart) / 1e6);
+    result.addStage('LAYER_II_TRACE', trace, currentTime() - stageStartLogical);
     result.artifacts.trace = trace;
 
     // Validate
@@ -138,10 +138,10 @@ function executePipeline(input, options = {}) {
     // ═══════════════════════════════════════════════════════════
     // STAGE 3: EVIDENCE BINDING (Layer III)
     // ═══════════════════════════════════════════════════════════
-    stageStart = process.hrtime.bigint();
+    stageStartLogical = currentTime();
     let evidence = bindEvidence(trace, { authority: 'PIPELINE' });
     evidence = sealEvidence(evidence);
-    result.addStage('LAYER_III_EVIDENCE', evidence, Number(process.hrtime.bigint() - stageStart) / 1e6);
+    result.addStage('LAYER_III_EVIDENCE', evidence, currentTime() - stageStartLogical);
     result.artifacts.evidence = evidence;
 
     // Validate
@@ -153,9 +153,9 @@ function executePipeline(input, options = {}) {
     // ═══════════════════════════════════════════════════════════
     // STAGE 4: CB FORMATION (Layer IV)
     // ═══════════════════════════════════════════════════════════
-    stageStart = process.hrtime.bigint();
+    stageStartLogical = currentTime();
     const cb = formCognitiveBlock(evidence, { cbType });
-    result.addStage('LAYER_IV_CB', cb, Number(process.hrtime.bigint() - stageStart) / 1e6);
+    result.addStage('LAYER_IV_CB', cb, currentTime() - stageStartLogical);
     result.artifacts.cb = cb;
 
     // Validate
@@ -167,9 +167,9 @@ function executePipeline(input, options = {}) {
     // ═══════════════════════════════════════════════════════════
     // STAGE 5: GENE ENCODING (Layer V)
     // ═══════════════════════════════════════════════════════════
-    stageStart = process.hrtime.bigint();
+    stageStartLogical = currentTime();
     const gene = encodeGene(cb);
-    result.addStage('LAYER_V_GENE', gene, Number(process.hrtime.bigint() - stageStart) / 1e6);
+    result.addStage('LAYER_V_GENE', gene, currentTime() - stageStartLogical);
     result.artifacts.gene = gene;
 
     // Validate
@@ -181,9 +181,9 @@ function executePipeline(input, options = {}) {
     // ═══════════════════════════════════════════════════════════
     // STAGE 6: MODE-A GATE (Layer VI) - CONSTITUTIONAL CHECK
     // ═══════════════════════════════════════════════════════════
-    stageStart = process.hrtime.bigint();
+    stageStartLogical = currentTime();
     const verification = modeAGate(gene, cb, evidence);
-    result.addStage('LAYER_VI_MODE_A', verification, Number(process.hrtime.bigint() - stageStart) / 1e6);
+    result.addStage('LAYER_VI_MODE_A', verification, currentTime() - stageStartLogical);
     result.artifacts.verification = verification;
 
     // Check MODE-A pass
@@ -194,13 +194,13 @@ function executePipeline(input, options = {}) {
     // ═══════════════════════════════════════════════════════════
     // STAGE 7: ASE GENERATION (Layer VII)
     // ═══════════════════════════════════════════════════════════
-    stageStart = process.hrtime.bigint();
+    stageStartLogical = currentTime();
     let ase = generateASE(verification, gene, {
       operation: aseOperation,
       payload: asePayload
     });
     ase = commitASE(ase);
-    result.addStage('LAYER_VII_ASE', ase, Number(process.hrtime.bigint() - stageStart) / 1e6);
+    result.addStage('LAYER_VII_ASE', ase, currentTime() - stageStartLogical);
     result.artifacts.ase = ase;
 
     // Validate
@@ -212,9 +212,9 @@ function executePipeline(input, options = {}) {
     // ═══════════════════════════════════════════════════════════
     // STAGE 8: COGNITIVE RUNTIME (Layer VIII)
     // ═══════════════════════════════════════════════════════════
-    stageStart = process.hrtime.bigint();
+    stageStartLogical = currentTime();
     const executionResult = executeCognitiveState(ase);
-    result.addStage('LAYER_VIII_RUNTIME', executionResult, Number(process.hrtime.bigint() - stageStart) / 1e6);
+    result.addStage('LAYER_VIII_RUNTIME', executionResult, currentTime() - stageStartLogical);
     result.artifacts.execution = executionResult;
 
     if (!executionResult.success) {
@@ -224,17 +224,17 @@ function executePipeline(input, options = {}) {
     // Generate feedback for closed-loop
     result.feedback = generateFeedback(executionResult);
 
-    // Calculate total execution time
-    result.execution_time = Number(process.hrtime.bigint() - startTime) / 1e6;
+    // Calculate total execution time (logical ticks)
+    result.execution_time = currentTime() - startLogical;
 
   } catch (error) {
     result.addError(result.stages.length > 0 ? result.stages[result.stages.length - 1].stage : 'INIT', error);
-    result.execution_time = Number(process.hrtime.bigint() - startTime) / 1e6;
+    result.execution_time = currentTime() - startLogical;
   }
 
   result.finalize();
 
-  // Audit the pipeline execution
+  // Audit the pipeline execution (LAW-005: logical time only)
   auditLog({
     layer: 'PIPELINE',
     operation: result.success ? 'EXECUTE_SUCCESS' : 'EXECUTE_FAILURE',
@@ -242,7 +242,7 @@ function executePipeline(input, options = {}) {
     output_hash: result.pipeline_hash,
     metadata: {
       stages_completed: result.stages.length,
-      execution_time_ms: result.execution_time,
+      logical_duration: result.execution_time, // LAW-005: Deterministic duration
       success: result.success
     }
   });
@@ -384,7 +384,7 @@ if (require.main === module) {
   console.log('► Pipeline Result:');
   console.log('  Success:', result.success);
   console.log('  Stages completed:', result.stages.length);
-  console.log('  Execution time:', result.execution_time.toFixed(2), 'ms');
+  console.log('  Execution time:', result.execution_time, 'logical ticks');
   console.log('  Pipeline hash:', result.pipeline_hash);
   console.log('');
 

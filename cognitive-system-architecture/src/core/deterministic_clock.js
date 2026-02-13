@@ -128,6 +128,28 @@ function createClock(initialValue = 0) {
   return new LamportClock(initialValue);
 }
 
+/**
+ * Calculate logical duration between two timestamps
+ * LAW-005: Deterministic duration measurement
+ * @param {number} startLogical - Start logical time
+ * @param {number} endLogical - End logical time (or current if omitted)
+ * @returns {number} Logical duration (clock ticks)
+ */
+function logicalDuration(startLogical, endLogical = null) {
+  if (endLogical === null) {
+    endLogical = globalClock.now();
+  }
+  return endLogical - startLogical;
+}
+
+/**
+ * Mark start of a timed section
+ * @returns {number} Starting logical time
+ */
+function markStart() {
+  return globalClock.now();
+}
+
 module.exports = {
   LamportClock,
   deterministicTime,
@@ -135,5 +157,7 @@ module.exports = {
   resetClock,
   compareTimestamps,
   createClock,
+  logicalDuration,
+  markStart,
   globalClock
 };

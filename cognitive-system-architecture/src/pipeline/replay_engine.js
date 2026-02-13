@@ -26,8 +26,10 @@ const { getASELedger } = require('../layers/layer7_ase');
  */
 class ReplaySession {
   constructor(sessionId) {
-    this.session_id = sessionId || `REPLAY_${canonicalHash({ time: Date.now() }).substring(0, 16)}`;
-    this.started_at = deterministicTime();
+    // LAW-005: Deterministic session ID - no Date.now()
+    const logicalTime = deterministicTime();
+    this.session_id = sessionId || `REPLAY_${canonicalHash({ logical: logicalTime.logical }).substring(0, 16)}`;
+    this.started_at = logicalTime;
     this.status = 'INITIALIZED';
     this.events_replayed = 0;
     this.checkpoints = [];
