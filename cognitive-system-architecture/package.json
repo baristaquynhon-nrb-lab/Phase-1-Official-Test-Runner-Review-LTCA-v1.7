@@ -1,0 +1,29 @@
+{
+  "name": "ltca-nrbpl-cognitive-os",
+  "version": "1.0.0",
+  "description": "LTCA-NRBPL Closed-Loop Constitutional Forensic Cognitive System",
+  "main": "src/pipeline/cognitive_pipeline.js",
+  "scripts": {
+    "test": "node tests/test_cognitive_pipeline.js",
+    "pipeline": "node src/pipeline/cognitive_pipeline.js",
+    "replay": "node src/pipeline/replay_engine.js",
+    "verify": "node tests/test_cognitive_pipeline.js"
+  },
+  "keywords": [
+    "cognitive-system",
+    "constitutional-ai",
+    "forensic",
+    "deterministic",
+    "ltca",
+    "nrbpl"
+  ],
+  "author": "LTCA-NRBPL Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/baristaquynhon-nrb-lab/Phase-1-Official-Test-Runner-Review-LTCA-v1.7"
+  }
+}
